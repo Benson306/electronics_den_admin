@@ -43,7 +43,7 @@ function SidebarContent() {
       </ul>
       <div className="px-6 my-6">
         <Button>
-          Create account
+          Add Admin User
           <span className="ml-2" aria-hidden="true">
             +
           </span>
