@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 
 import PageTitle from '../components/Typography/PageTitle'
 import SectionTitle from '../components/Typography/SectionTitle'
-import CTA from '../components/CTA'
 import {
   Table,
   TableHeader,
@@ -32,76 +31,74 @@ function Tables() {
    */
 
   // setup pages control for every table
-  const [pageTable1, setPageTable1] = useState(1)
-  const [pageTable2, setPageTable2] = useState(1)
+  const [pageTable, setPageTable] = useState(1)
+  const [page, setPage] = useState(1)
+  const [data, setData] = useState([])
 
   // setup data for every table
-  const [dataTable1, setDataTable1] = useState([])
-  const [dataTable2, setDataTable2] = useState([])
+  const [deliveredOrders, setDeliveredOrders] = useState([])
 
   // pagination setup
   const resultsPerPage = 10
-  const totalResults = response.length
+
+  const [totalResults, setTotalResults] = useState(0);
 
   // pagination change control
-  function onPageChangeTable1(p) {
-    setPageTable1(p)
+  function onPageChangeTable(p) {
+    setPageTable(p)
   }
-
-  // pagination change control
-  function onPageChangeTable2(p) {
-    setPageTable2(p)
-  }
-
   // on page change, load new sliced data
   // here you would make another server request for new data
-  useEffect(() => {
-    setDataTable1(response.slice((pageTable1 - 1) * resultsPerPage, pageTable1 * resultsPerPage))
-  }, [pageTable1])
+  // useEffect(() => {
+    
 
-  // on page change, load new sliced data
-  // here you would make another server request for new data
-  useEffect(() => {
-    setDataTable2(response2.slice((pageTable2 - 1) * resultsPerPage, pageTable2 * resultsPerPage))
-  }, [pageTable2])
+  // }, [pageTable])
+
+  useEffect(()=>{
+    fetch('http://localhost:5000/GetDeliveredOrders')
+    .then( data => data.json())
+    .then( data => { 
+      setDeliveredOrders(data); 
+      setTotalResults(data.length);
+      setData(data.reverse().slice((page - 1) * resultsPerPage, page * resultsPerPage))
+    } )
+    .catch( err => { console.log(err) })
+  })
+
 
   return (
     <>
-      <PageTitle>Tables</PageTitle>
-
-      <CTA />
-
-      <SectionTitle>Simple table</SectionTitle>
+      <PageTitle>Delivered Orders</PageTitle>
       <TableContainer className="mb-8">
         <Table>
           <TableHeader>
             <tr>
-              <TableCell>Client</TableCell>
-              <TableCell>Amount</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Date</TableCell>
+              <TableCell>Client Email/Phone Number</TableCell>
+              <TableCell>Order Cost</TableCell>
+              <TableCell>Order Date</TableCell>
+              <TableCell>Actions</TableCell>
             </tr>
           </TableHeader>
           <TableBody>
-            {dataTable1.map((user, i) => (
+            {data.reverse().map((dt, i) => (
               <TableRow key={i}>
                 <TableCell>
                   <div className="flex items-center text-sm">
-                    <Avatar className="hidden mr-3 md:block" src={user.avatar} alt="User avatar" />
+                    {/* <Avatar className="hidden mr-3 md:block" src={user.avatar} alt="User avatar" /> */}
                     <div>
-                      <p className="font-semibold">{user.name}</p>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">{user.job}</p>
+                      <p className="font-semibold">{dt.email}</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400">{dt.phone_number}</p>
                     </div>
                   </div>
                 </TableCell>
                 <TableCell>
-                  <span className="text-sm">$ {user.amount}</span>
+                  <span className="text-sm">Ksh. {dt.total_price + Math.floor(dt.delivery_cost) }</span>
                 </TableCell>
                 <TableCell>
-                  <Badge type={user.status}>{user.status}</Badge>
+                  <span className="text-sm">{ dt.order_date }</span>
                 </TableCell>
                 <TableCell>
-                  <span className="text-sm">{new Date(user.date).toLocaleDateString()}</span>
+                  <span className="text-sm">{ dt.delivery_date }</span>
                 </TableCell>
               </TableRow>
             ))}
@@ -111,13 +108,13 @@ function Tables() {
           <Pagination
             totalResults={totalResults}
             resultsPerPage={resultsPerPage}
-            onChange={onPageChangeTable1}
+            onChange={onPageChangeTable}
             label="Table navigation"
           />
         </TableFooter>
       </TableContainer>
 
-      <SectionTitle>Table with actions</SectionTitle>
+      {/* <SectionTitle>Table with actions</SectionTitle>
       <TableContainer className="mb-8">
         <Table>
           <TableHeader>
@@ -172,7 +169,7 @@ function Tables() {
             label="Table navigation"
           />
         </TableFooter>
-      </TableContainer>
+      </TableContainer> */}
     </>
   )
 }

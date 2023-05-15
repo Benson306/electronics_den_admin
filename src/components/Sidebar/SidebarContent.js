@@ -1,9 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import routes from '../../routes/sidebar'
 import { NavLink, Route } from 'react-router-dom'
 import * as Icons from '../../icons'
 import SidebarSubmenu from './SidebarSubmenu'
 import { Button } from '@windmill/react-ui'
+
+  
 
 function Icon({ icon, ...props }) {
   const Icon = Icons[icon]
@@ -11,10 +13,11 @@ function Icon({ icon, ...props }) {
 }
 
 function SidebarContent() {
+
   return (
     <div className="py-4 text-gray-500 dark:text-gray-400">
       <a className="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200" href="#">
-        Windmill
+        Iko Nini
       </a>
       <ul className="mt-6">
         {routes.map((route) =>
@@ -41,14 +44,6 @@ function SidebarContent() {
           )
         )}
       </ul>
-      <div className="px-6 my-6">
-        <Button>
-          Add Admin User
-          <span className="ml-2" aria-hidden="true">
-            +
-          </span>
-        </Button>
-      </div>
     </div>
   )
 }

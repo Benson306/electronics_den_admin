@@ -30,6 +30,7 @@ import { ReactComponent as RevenueIcon } from './revenue.svg'
 import { ReactComponent as CompleteIcon } from './complete.svg'
 import { ReactComponent as PendingIcon } from './pending.svg'
 import { ReactComponent as OrderIcon } from './order.svg'
+import { ReactComponent as DeliveredIcon } from './delivered.svg'
 
 export {
   ButtonsIcon,
@@ -63,5 +64,6 @@ export {
   RevenueIcon,
   CompleteIcon,
   PendingIcon,
-  OrderIcon
+  OrderIcon,
+  DeliveredIcon
 }
