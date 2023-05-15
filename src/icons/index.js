@@ -26,6 +26,10 @@ import { ReactComponent as DropdownIcon } from './dropdown.svg'
 import { ReactComponent as OutlinePersonIcon } from './outlinePerson.svg'
 import { ReactComponent as OutlineCogIcon } from './outlineCog.svg'
 import { ReactComponent as OutlineLogoutIcon } from './outlineLogout.svg'
+import { ReactComponent as RevenueIcon } from './revenue.svg'
+import { ReactComponent as CompleteIcon } from './complete.svg'
+import { ReactComponent as PendingIcon } from './pending.svg'
+import { ReactComponent as OrderIcon } from './order.svg'
 
 export {
   ButtonsIcon,
@@ -56,4 +60,8 @@ export {
   OutlinePersonIcon,
   OutlineCogIcon,
   OutlineLogoutIcon,
+  RevenueIcon,
+  CompleteIcon,
+  PendingIcon,
+  OrderIcon
 }

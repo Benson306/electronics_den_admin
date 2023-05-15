@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 
 import PageTitle from '../components/Typography/PageTitle'
-import CTA from '../components/CTA'
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from '@windmill/react-ui'
+import { Input, HelperText, Label, Select, Textarea } from '@windmill/react-ui'
 
 function Modals() {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -18,7 +18,6 @@ function Modals() {
   return (
     <>
       <PageTitle>Modals</PageTitle>
-      <CTA />
 
       <div>
         <Button onClick={openModal}>Open modal</Button>
@@ -27,8 +26,27 @@ function Modals() {
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <ModalHeader>Modal header</ModalHeader>
         <ModalBody>
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nostrum et eligendi repudiandae
-          voluptatem tempore!
+
+
+        <Label>
+          <span>Email</span>
+          <Input className="mt-1" type="email" placeholder="JaneDoe@gmail.com" />
+          { true && <HelperText value={false}>Your password is too short.</HelperText> }
+        </Label>
+
+        <Label className="mt-4">
+          <span>Password</span>
+          <Input className="mt-1" valid={true} type="password" placeholder="password" />
+          <HelperText valid={false}>Your password is strong.</HelperText>
+        </Label>
+
+        <Label className="mt-4">
+          <span>Confirm Password</span>
+          <Input className="mt-1" valid={true} type="password" placeholder="password" />
+          <HelperText valid={false}>Your password is strong.</HelperText>
+        </Label>
+
+
         </ModalBody>
         <ModalFooter>
           {/* I don't like this approach. Consider passing a prop to ModalFooter
@@ -42,7 +60,7 @@ function Modals() {
             </Button>
           </div>
           <div className="hidden sm:block">
-            <Button>Accept</Button>
+            <Button>Submit</Button>
           </div>
           <div className="block w-full sm:hidden">
             <Button block size="large" layout="outline" onClick={closeModal}>

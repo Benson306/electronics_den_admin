@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react'
 
-import CTA from '../components/CTA'
 import InfoCard from '../components/Cards/InfoCard'
 import ChartCard from '../components/Chart/ChartCard'
 import { Doughnut, Line } from 'react-chartjs-2'
 import ChartLegend from '../components/Chart/ChartLegend'
 import PageTitle from '../components/Typography/PageTitle'
-import { ChatIcon, CartIcon, MoneyIcon, PeopleIcon } from '../icons'
+import { RevenueIcon, CompleteIcon, PendingIcon, OrderIcon } from '../icons'
 import RoundIcon from '../components/RoundIcon'
-import response from '../utils/demo/tableData'
+
 import {
   TableBody,
   TableContainer,
@@ -28,14 +27,23 @@ import {
   doughnutLegends,
   lineLegends,
 } from '../utils/demo/chartsData'
+import SectionTitle from '../components/Typography/SectionTitle'
 
 function Dashboard() {
   const [page, setPage] = useState(1)
   const [data, setData] = useState([])
+  const [ orders, setOrders ] = useState([])
+
+  const [deliveredOrders, setDeliveredOrders] = useState(0);
+  const [allOrders, setAllOrders] = useState(0);
+  const [pendingOrders, setPendingOrders] = useState(0);
+  const [totalResults, setTotalResults] = useState(0);
+
+  const [total, setTotal] = useState(0);
 
   // pagination setup
-  const resultsPerPage = 10
-  const totalResults = response.length
+  const resultsPerPage = 5
+  //const totalResults = data.length
 
   // pagination change control
   function onPageChange(p) {
@@ -45,47 +53,69 @@ function Dashboard() {
   // on page change, load new sliced data
   // here you would make another server request for new data
   useEffect(() => {
-    setData(response.slice((page - 1) * resultsPerPage, page * resultsPerPage))
+    
+    
+    fetch('http://localhost:5000/GetAllOrders')
+    .then( data => data.json())
+    .then( data => { 
+        setAllOrders(data.length); 
+        setOrders(data);
+        setTotalResults(data.length);
+        data.map(dt => {
+          setTotal(ttl => ttl + dt.delivery_cost + Math.floor(dt.total_price) );
+        })
+        setData(data.reverse().slice((page - 1) * resultsPerPage, page * resultsPerPage))
+      } )
+    .catch( err => { console.log(err) })
+
+    fetch('http://localhost:5000/GetPendingOrders')
+    .then( data => data.json())
+    .then( data => { setPendingOrders(data.length) } )
+    .catch( err => { console.log(err) })
+
+    fetch('http://localhost:5000/GetDeliveredOrders')
+    .then( data => data.json())
+    .then( data => { setDeliveredOrders(data.length); } )
+    .catch( err => { console.log(err) })
+
   }, [page])
 
   return (
     <>
       <PageTitle>Dashboard</PageTitle>
 
-      <CTA />
-
       {/* <!-- Cards --> */}
       <div className="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4">
-        <InfoCard title="Total clients" value="6389">
+        <InfoCard title="Total Revenue" value={`Ksh. ${total}`}>
           <RoundIcon
-            icon={PeopleIcon}
+            icon={RevenueIcon}
             iconColorClass="text-orange-500 dark:text-orange-100"
             bgColorClass="bg-orange-100 dark:bg-orange-500"
             className="mr-4"
           />
         </InfoCard>
 
-        <InfoCard title="Account balance" value="$ 46,760.89">
+        <InfoCard title="Total Orders" value={allOrders}>
           <RoundIcon
-            icon={MoneyIcon}
+            icon={OrderIcon}
             iconColorClass="text-green-500 dark:text-green-100"
             bgColorClass="bg-green-100 dark:bg-green-500"
             className="mr-4"
           />
         </InfoCard>
 
-        <InfoCard title="New sales" value="376">
+        <InfoCard title="Pending Orders" value={pendingOrders}>
           <RoundIcon
-            icon={CartIcon}
+            icon={PendingIcon}
             iconColorClass="text-blue-500 dark:text-blue-100"
             bgColorClass="bg-blue-100 dark:bg-blue-500"
             className="mr-4"
           />
         </InfoCard>
 
-        <InfoCard title="Pending contacts" value="35">
+        <InfoCard title="Delivered Orders" value={deliveredOrders}>
           <RoundIcon
-            icon={ChatIcon}
+            icon={CompleteIcon}
             iconColorClass="text-teal-500 dark:text-teal-100"
             bgColorClass="bg-teal-100 dark:bg-teal-500"
             className="mr-4"
@@ -93,36 +123,40 @@ function Dashboard() {
         </InfoCard>
       </div>
 
+      <SectionTitle>Latest Orders</SectionTitle>
       <TableContainer>
         <Table>
           <TableHeader>
             <tr>
-              <TableCell>Client</TableCell>
-              <TableCell>Amount</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Date</TableCell>
+              <TableCell>Email/Phone Number</TableCell>
+              <TableCell>Order Cost</TableCell>
+              <TableCell>Delivery Status</TableCell>
+              <TableCell>Order Date</TableCell>
             </tr>
           </TableHeader>
           <TableBody>
-            {data.map((user, i) => (
+            { data.map((order, i) => (
               <TableRow key={i}>
                 <TableCell>
                   <div className="flex items-center text-sm">
-                    <Avatar className="hidden mr-3 md:block" src={user.avatar} alt="User image" />
+                    {/* <Avatar className="hidden mr-3 md:block" src={user.avatar} alt="User image" /> */}
                     <div>
-                      <p className="font-semibold">{user.name}</p>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">{user.job}</p>
+                      <p className="font-semibold">{order.email}</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400">{order.phone_number}</p>
                     </div>
                   </div>
                 </TableCell>
                 <TableCell>
-                  <span className="text-sm">$ {user.amount}</span>
+                  <span className="text-sm">ksh. {order.total_price + order.delivery_cost}</span>
                 </TableCell>
                 <TableCell>
-                  <Badge type={user.status}>{user.status}</Badge>
+                  {
+                    order.delivery_status === "delivered" ? <Badge type="success">{order.delivery_status}</Badge> : <Badge type="warning">{order.delivery_status}</Badge>
+                  }
                 </TableCell>
                 <TableCell>
-                  <span className="text-sm">{new Date(user.date).toLocaleDateString()}</span>
+                  {/* {new Date(user.date).toLocaleDateString()} */}
+                  <span className="text-sm">{order.order_date}</span>
                 </TableCell>
               </TableRow>
             ))}
@@ -138,7 +172,7 @@ function Dashboard() {
         </TableFooter>
       </TableContainer>
 
-      <PageTitle>Charts</PageTitle>
+      {/* <PageTitle>Charts</PageTitle>
       <div className="grid gap-6 mb-8 md:grid-cols-2">
         <ChartCard title="Revenue">
           <Doughnut {...doughnutOptions} />
@@ -149,7 +183,7 @@ function Dashboard() {
           <Line {...lineOptions} />
           <ChartLegend legends={lineLegends} />
         </ChartCard>
-      </div>
+      </div> */}
     </>
   )
 }
