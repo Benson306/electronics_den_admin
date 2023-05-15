@@ -30,28 +30,28 @@ function Login() {
               <h1 className="mb-4 text-xl font-semibold text-gray-700 dark:text-gray-200">Login</h1>
               <Label>
                 <span>Email</span>
-                <Input className="mt-1" type="email" placeholder="john@doe.com" />
+                <Input className="mt-1" type="email" placeholder="john@doe.com" required />
               </Label>
 
               <Label className="mt-4">
                 <span>Password</span>
-                <Input className="mt-1" type="password" placeholder="***************" />
+                <Input className="mt-1" type="password" placeholder="***************" required />
               </Label>
 
-              <Button className="mt-4" block tag={Link} to="/app">
+              <Button type="submit" className="mt-4" block tag={Link} to="/app">
                 Log in
               </Button>
+{/* 
+              <hr className="my-8" /> */}
 
-              <hr className="my-8" />
-
-              <Button block layout="outline">
+              {/* <Button block layout="outline">
                 <GithubIcon className="w-4 h-4 mr-2" aria-hidden="true" />
                 Github
               </Button>
               <Button className="mt-4" block layout="outline">
                 <TwitterIcon className="w-4 h-4 mr-2" aria-hidden="true" />
                 Twitter
-              </Button>
+              </Button> */}
 
               <p className="mt-4">
                 <Link
@@ -61,14 +61,14 @@ function Login() {
                   Forgot your password?
                 </Link>
               </p>
-              <p className="mt-1">
+              {/* <p className="mt-1">
                 <Link
                   className="text-sm font-medium text-purple-600 dark:text-purple-400 hover:underline"
                   to="/create-account"
                 >
                   Create account
                 </Link>
-              </p>
+              </p> */}
             </div>
           </main>
         </div>
