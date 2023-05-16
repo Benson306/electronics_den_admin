@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import PageTitle from '../components/Typography/PageTitle'
 import SectionTitle from '../components/Typography/SectionTitle'
@@ -52,6 +52,69 @@ function Modals() {
     setIsModalOpen(false)
   }
 
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confPassword, setConfPassword] = useState('');
+  const [passLength, setPassLength] = useState(false);
+  const [same, setSame] = useState(false);
+  const [error, setError] = useState(false);
+
+  useEffect(()=>{
+    if(password.length > 7){
+      setPassLength(true)
+    }else{
+      setPassLength(false);
+    }
+
+    if(password === confPassword){
+      setSame(true);
+    }else{
+      setSame(false);
+    }
+
+  },[password])
+
+
+  useEffect(()=>{
+    
+    if(password === confPassword){
+      setSame(true);
+    }else{
+      setSame(false);
+    }
+
+    if(password.length > 7){
+      setPassLength(true)
+    }else{
+      setPassLength(false);
+    }
+
+  },[confPassword])
+
+  function handleSubmit(){
+
+    if(same && passLength && email.length > 3){
+      fetch('http://localhost:5000/add_user',{
+        method: 'POST',
+        data: { email, password }
+      })
+      .then(data => data.json())
+      .then( data => {
+        if(data === 'Added'){
+            console.log('added')
+            closeModal();
+        }else{
+          console.log('Not Added')
+        }
+      })
+      .catch(err => console.log(err))
+    }else{
+      setError(true);
+    }
+    
+  }
+
   return (
     <>
       <PageTitle>Manage Users</PageTitle>
@@ -61,26 +124,26 @@ function Modals() {
       </div>
 
       <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <ModalHeader>Modal header</ModalHeader>
+        <ModalHeader>Add User</ModalHeader>
+        { error ? <HelperText valid={false}>Unable to Submit Form Due To errors in the fields below</HelperText> : <div></div>  }
         <ModalBody>
 
 
         <Label>
           <span>Email</span>
-          <Input className="mt-1" type="email" placeholder="JaneDoe@gmail.com" />
-          { true && <HelperText value={false}>Your password is too short.</HelperText> }
+          <Input className="mt-1" type="email" placeholder="JaneDoe@gmail.com" onChange={e => setEmail(e.target.value)} required/>
         </Label>
 
         <Label className="mt-4">
           <span>Password</span>
-          <Input className="mt-1" valid={true} type="password" placeholder="password" />
-          <HelperText valid={false}>Your password is strong.</HelperText>
+          <Input className="mt-1" type="password" placeholder="password" onChange={e => setPassword(e.target.value)} required/>
+          { passLength ? <div></div> : <HelperText valid={false}>Your password is too short.</HelperText> }
         </Label>
 
         <Label className="mt-4">
           <span>Confirm Password</span>
-          <Input className="mt-1" valid={true} type="password" placeholder="password" />
-          <HelperText valid={false}>Your password is strong.</HelperText>
+          <Input className="mt-1" type="password" placeholder="password" onChange={e => setConfPassword(e.target.value)} required />
+          { same ? <div></div> : <HelperText valid={false}>Password Does Not Match.</HelperText>  }
         </Label>
 
 
@@ -96,7 +159,7 @@ function Modals() {
               Cancel
             </Button>
           </div>
-          <div className="hidden sm:block">
+          <div className="hidden sm:block" onClick={handleSubmit}>
             <Button>Submit</Button>
           </div>
           <div className="block w-full sm:hidden">
@@ -105,8 +168,8 @@ function Modals() {
             </Button>
           </div>
           <div className="block w-full sm:hidden">
-            <Button block size="large">
-              Accept
+            <Button block size="large" onClick={handleSubmit}>
+              Submit
             </Button>
           </div>
         </ModalFooter>

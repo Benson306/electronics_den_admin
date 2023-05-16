@@ -36,7 +36,7 @@ function PendingOrders() {
   const [data, setData] = useState([])
 
   // setup data for every table
-  const [deliveredOrders, setDeliveredOrders] = useState([])
+  const [loading, setLoading] = useState(true)
 
   // pagination setup
   const resultsPerPage = 10
@@ -58,9 +58,10 @@ function PendingOrders() {
     fetch('http://localhost:5000/GetPendingOrders')
     .then( data => data.json())
     .then( data => { 
-      setDeliveredOrders(data); 
+      //setDeliveredOrders(data); 
       setTotalResults(data.length);
       setData(data.reverse().slice((page - 1) * resultsPerPage, page * resultsPerPage))
+      setLoading(false)
     } )
     .catch( err => { console.log(err) })
   },[])
@@ -73,15 +74,22 @@ function PendingOrders() {
         <Table>
           <TableHeader>
             <tr>
-              <TableCell>Client Email/Phone Number</TableCell>
+              <TableCell>Client Details</TableCell>
               <TableCell>Items</TableCell>
-              <TableCell>Order Cost</TableCell>
+              <TableCell>Delivery Location</TableCell>
+              <TableCell>Delivery Cost</TableCell>
+              <TableCell>Items Cost</TableCell>
               <TableCell>Order Date</TableCell>
               <TableCell>Actions</TableCell>
             </tr>
           </TableHeader>
           <TableBody>
-            {data.reverse().map((dt, i) => (
+            {
+            loading ? <TableCell>Loading...</TableCell> :
+
+            data.length === 0 ? <TableCell>No Records</TableCell> :
+            
+            data.reverse().map((dt, i) => (
               <TableRow key={i}>
                 <TableCell>
                   <div className="flex items-center text-sm">
@@ -93,7 +101,7 @@ function PendingOrders() {
                   </div>
                 </TableCell>
                 <TableCell>
-                    <div className="flex items-center text-sm">
+                    <div className="flex items-center text-xs">
                         <div>
                         {
                             dt.items.map( item => <p className="text-xs text-gray-600 dark:text-gray-400">{item.title} X {item.quantity}</p>)
@@ -103,10 +111,16 @@ function PendingOrders() {
                     </div>
                 </TableCell>
                 <TableCell>
-                  <span className="text-sm">Ksh. {dt.total_price + Math.floor(dt.delivery_cost) }</span>
+                  <span className="text-xs">{dt.deliveryLocation}</span>
                 </TableCell>
                 <TableCell>
-                  <span className="text-sm">{ dt.order_date }</span>
+                  <span className="text-xs">Ksh. { dt.delivery_cost }</span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-xs">Ksh. {Math.floor(dt.total_price) }</span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-xs">{ dt.order_date }</span>
                 </TableCell>
                 <TableCell>
                   <Button layout="outline">Mark As Delivered</Button>

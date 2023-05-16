@@ -36,7 +36,7 @@ function Tables() {
   const [data, setData] = useState([])
 
   // setup data for every table
-  const [deliveredOrders, setDeliveredOrders] = useState([])
+  const [loading, setLoading] = useState(true)
 
   // pagination setup
   const resultsPerPage = 10
@@ -58,9 +58,10 @@ function Tables() {
     fetch('http://localhost:5000/GetDeliveredOrders')
     .then( data => data.json())
     .then( data => { 
-      setDeliveredOrders(data); 
+      //setDeliveredOrders(data); 
       setTotalResults(data.length);
       setData(data.reverse().slice((page - 1) * resultsPerPage, page * resultsPerPage))
+      setLoading(false);
     } )
     .catch( err => { console.log(err) })
   },[])
@@ -73,14 +74,23 @@ function Tables() {
         <Table>
           <TableHeader>
             <tr>
-              <TableCell>Client Email/Phone Number</TableCell>
-              <TableCell>Order Cost</TableCell>
+              <TableCell>Client Details</TableCell>
+              <TableCell>Items</TableCell>
+              <TableCell>Delivery Location</TableCell>
+              <TableCell>Delivery Cost</TableCell>
+              <TableCell>Items Cost</TableCell>
               <TableCell>Order Date</TableCell>
-              <TableCell>Actions</TableCell>
+              <TableCell>Delivery Date</TableCell>
             </tr>
           </TableHeader>
           <TableBody>
-            {data.reverse().map((dt, i) => (
+            {
+            
+            loading ? <TableCell>Loading...</TableCell> :
+
+            data.length === 0 ? <TableCell>No Records</TableCell> :
+            
+            data.reverse().map((dt, i) => (
               <TableRow key={i}>
                 <TableCell>
                   <div className="flex items-center text-sm">
@@ -92,13 +102,29 @@ function Tables() {
                   </div>
                 </TableCell>
                 <TableCell>
-                  <span className="text-sm">Ksh. {dt.total_price + Math.floor(dt.delivery_cost) }</span>
+                    <div className="flex items-center text-sm">
+                        <div>
+                        {
+                            dt.items.map( item => <p className="text-xs text-gray-600 dark:text-gray-400">{item.title} X {item.quantity}</p>)
+                        }
+                        
+                        </div>
+                    </div>
+                </TableCell>
+                <TableCell>
+                  <span className="text-sm">{dt.deliveryLocation}</span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-sm">Ksh. { dt.delivery_cost }</span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-sm">Ksh. {Math.floor(dt.total_price) }</span>
                 </TableCell>
                 <TableCell>
                   <span className="text-sm">{ dt.order_date }</span>
                 </TableCell>
                 <TableCell>
-                  <span className="text-sm">{ dt.delivery_date }</span>
+                <span className="text-sm">{ dt.delivery_date }</span>
                 </TableCell>
               </TableRow>
             ))}
