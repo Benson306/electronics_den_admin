@@ -15,31 +15,14 @@ import {
   Badge,
   Avatar,
   Pagination,
+  Alert
 } from '@windmill/react-ui'
 
 
 import { EditIcon, TrashIcon } from '../icons'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-  const data = 
-  [
-    {
-      email:"bnkimtai@gmail.com",
-      phone:"0707357072"
-    },
-    {
-      email: "123@gmail.com",
-      phone:"0707357072"
-    },
-    {
-      email:"bnkimtai@gmail.com",
-      phone:"0707357072"
-    },
-    {
-      email: "123@gmail.com",
-      phone:"0707357072"
-    }
-  ]
-  
 
 function Modals() {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -59,6 +42,9 @@ function Modals() {
   const [passLength, setPassLength] = useState(false);
   const [same, setSame] = useState(false);
   const [error, setError] = useState(false);
+
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(()=>{
     if(password.length > 7){
@@ -92,31 +78,89 @@ function Modals() {
 
   },[confPassword])
 
+  useEffect(()=>{
+    fetch('http://localhost:5000/users')
+    .then(result => result.json())
+    .then(result =>{
+        setData(result)
+        setLoading(false)
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  })
+
   function handleSubmit(){
 
     if(same && passLength && email.length > 3){
+      console.log({ email, password});
       fetch('http://localhost:5000/add_user',{
         method: 'POST',
-        data: { email, password }
+        headers: {
+          'Content-Type':'application/json'
+        },
+        body: JSON.stringify({ email, password })
       })
       .then(data => data.json())
       .then( data => {
+        console.log(data);
         if(data === 'Added'){
-            console.log('added')
-            closeModal();
-        }else{
-          console.log('Not Added')
+          toast('Success',{
+            type:'success'
+          })
+          
+          closeModal();
+            
+        }else if(data === 'Exists'){
+          toast('Failed. Email is Already Used',{
+            type:'error'
+          })
+        }else if(data === 'Not Added'){
+          toast('Failed.Try Again',{
+            type:'error'
+          })
         }
       })
-      .catch(err => console.log(err))
+      .catch(err => {
+        toast('Failed.Try Again',{
+        type:'error'
+      })
+      }
+      )
     }else{
       setError(true);
     }
     
   }
 
+  function handleRemove(id){
+    console.log(id);
+    fetch('http://localhost:5000/delete/'+id,{
+      method:'DELETE'
+    })
+    .then( result => result.json())
+    .then( result => {
+      if(result ===  'success'){
+        toast('Success',{
+          type:'success'
+        })
+      }else{
+        toast('Failed',{
+          type:'error'
+        })
+      }
+    })
+    .catch(err =>{
+      toast('Failed',{
+        type:'error'
+      })
+    })
+  }
+
   return (
     <>
+      <ToastContainer />
+      
       <PageTitle>Manage Users</PageTitle>
 
       <div className="flex mr-5 mb-5 justify-end">
@@ -149,11 +193,6 @@ function Modals() {
 
         </ModalBody>
         <ModalFooter>
-          {/* I don't like this approach. Consider passing a prop to ModalFooter
-           * that if present, would duplicate the buttons in a way similar to this.
-           * Or, maybe find some way to pass something like size="large md:regular"
-           * to Button
-           */}
           <div className="hidden sm:block">
             <Button layout="outline" onClick={closeModal}>
               Cancel
@@ -180,12 +219,17 @@ function Modals() {
           <TableHeader>
             <tr>
               <TableCell>Email</TableCell>
-              <TableCell>Phone Number</TableCell>
               <TableCell>Actions</TableCell>
             </tr>
           </TableHeader>
           <TableBody>
-            {data.map((user, i) => (
+            {
+              loading && <TableRow><TableCell><div>Loading....</div></TableCell></TableRow>
+            }
+            {
+              !loading && data.length === 0 && <TableRow><TableCell><div>No records to show</div></TableCell></TableRow>
+            }
+            {!loading && data.map((user, i) => (
               <TableRow key={i}>
                 <TableCell>
                   <div className="flex items-center text-sm">
@@ -196,14 +240,11 @@ function Modals() {
                   </div>
                 </TableCell>
                 <TableCell>
-                  <span className="text-sm">{user.phone}</span>
-                </TableCell>
-                <TableCell>
                   <div className="flex items-center space-x-4">
-                    <Button layout="link" size="icon" aria-label="Edit">
+                    {/* <Button layout="link" size="icon" aria-label="Edit">
                       <EditIcon className="w-5 h-5" aria-hidden="true" />
-                    </Button>
-                    <Button layout="link" size="icon" aria-label="Delete">
+                    </Button> */}
+                    <Button layout="link" size="icon" aria-label="Delete" onClick={()=>handleRemove(user._id)}>
                       <TrashIcon className="w-5 h-5" aria-hidden="true" />
                     </Button>
                   </div>
