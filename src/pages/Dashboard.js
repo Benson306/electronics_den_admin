@@ -41,6 +41,8 @@ function Dashboard() {
 
   const [total, setTotal] = useState(0);
 
+  const [loading, setLoading] = useState(true);
+
   // pagination setup
   const resultsPerPage = 5
   //const totalResults = data.length
@@ -65,8 +67,9 @@ function Dashboard() {
           setTotal(ttl => ttl + dt.delivery_cost + Math.floor(dt.total_price) );
         })
         setData(data.reverse().slice((page - 1) * resultsPerPage, page * resultsPerPage))
+        setLoading(false);
       } )
-    .catch( err => { console.log(err) })
+    .catch( err => { console.log(err); setLoading(false); })
 
     fetch('http://localhost:5000/GetPendingOrders')
     .then( data => data.json())
@@ -128,14 +131,28 @@ function Dashboard() {
         <Table>
           <TableHeader>
             <tr>
-              <TableCell>Email/Phone Number</TableCell>
+              <TableCell>Client Details</TableCell>
+              <TableCell>Items</TableCell>
+              <TableCell>Delivery Location</TableCell>
               <TableCell>Order Cost</TableCell>
               <TableCell>Delivery Status</TableCell>
               <TableCell>Order Date</TableCell>
+              <TableCell>Delivery Date</TableCell>
             </tr>
           </TableHeader>
           <TableBody>
-            { data.map((order, i) => (
+            {
+              loading && <TableRow>
+                <TableCell><div>Loading...</div></TableCell>
+              </TableRow>
+            }
+            {
+              !loading && data.length === 0 && <TableRow>
+              <TableCell><div>No records To Show</div></TableCell>
+            </TableRow>
+            }
+            { !loading && 
+            data.map((order, i) => (
               <TableRow key={i}>
                 <TableCell>
                   <div className="flex items-center text-sm">
@@ -145,6 +162,18 @@ function Dashboard() {
                       <p className="text-xs text-gray-600 dark:text-gray-400">{order.phone_number}</p>
                     </div>
                   </div>
+                </TableCell>
+                <TableCell>
+                    <div className="flex items-center text-sm">
+                        <div>
+                        {
+                            order.items.map( item => <p className="text-xs text-gray-600 dark:text-gray-400">{item.title} X {item.quantity}</p>)
+                        }
+                        </div>
+                    </div>
+                </TableCell>
+                <TableCell>
+                  <span className="text-sm">{order.deliveryLocation}</span>
                 </TableCell>
                 <TableCell>
                   <span className="text-sm">ksh. {order.total_price + order.delivery_cost}</span>
@@ -157,6 +186,9 @@ function Dashboard() {
                 <TableCell>
                   {/* {new Date(user.date).toLocaleDateString()} */}
                   <span className="text-sm">{order.order_date}</span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-sm">{order.delivery_date}</span>
                 </TableCell>
               </TableRow>
             ))}

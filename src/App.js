@@ -23,7 +23,7 @@ function App() {
           {/* Place new routes over this */}
           <Route path="/app" component={ authUser == null ? Login : Layout} />
           {/* If you have an index page, you can remothis Redirect */}
-          <Redirect exact from="/" to="/login" />
+          <Redirect exact from="/" to="/app" />
         </Switch>
       </Router>
     </>
