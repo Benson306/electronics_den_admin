@@ -1,12 +1,63 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useContext, useState } from 'react'
+import { Link, useHistory } from 'react-router-dom'
 
 import ImageLight from '../assets/img/login-office.jpeg'
 import ImageDark from '../assets/img/login-office-dark.jpeg'
 import { GithubIcon, TwitterIcon } from '../icons'
 import { Label, Input, Button } from '@windmill/react-ui'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { AuthContext } from '../context/AuthContext'
 
 function Login() {
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const { login } = useContext(AuthContext);
+
+  const history = useHistory();
+
+  const handleSubmit = () =>{
+    
+    if(email.length == 0 || password.length == 0){
+        toast('Credentials cannot be Empty',{
+          type:'error'
+        })
+      return;
+    }
+    setLoading(true)
+    
+    fetch('http://localhost:5000/login',{
+      
+      method:'POST',
+      headers: {
+        'Content-Type':'application/json'
+      },
+      body: JSON.stringify({ email, password})
+    })
+    .then(res => res.json())
+    .then(res =>{
+      if(res === 'success'){
+
+        toast('Success',{
+          type:'success'
+        })
+        login(email);
+        history.push('/app')
+      }else{
+        
+        toast('Wrong Credentials',{
+          type:'error'
+        })
+      }
+      setLoading(false);
+    })
+    .catch(err => {setLoading(false); console.log(err)})
+
+    //setLoading(false);
+  }
   return (
     <div className="flex items-center min-h-screen p-6 bg-gray-50 dark:bg-gray-900">
       <div className="flex-1 h-full max-w-4xl mx-auto overflow-hidden bg-white rounded-lg shadow-xl dark:bg-gray-800">
@@ -24,23 +75,24 @@ function Login() {
               src={ImageDark}
               alt="Office"
             />
+            <ToastContainer />
           </div>
           <main className="flex items-center justify-center p-6 sm:p-12 md:w-1/2">
             <div className="w-full">
               <h1 className="mb-4 text-xl font-semibold text-gray-700 dark:text-gray-200">Login</h1>
               <Label>
                 <span>Email</span>
-                <Input className="mt-1" type="email" placeholder="john@doe.com" required />
+                <Input className="mt-1" type="email" placeholder="john@doe.com" onChange={e=> setEmail(e.target.value)} required />
               </Label>
 
               <Label className="mt-4">
                 <span>Password</span>
-                <Input className="mt-1" type="password" placeholder="***************" required />
+                <Input className="mt-1" type="password" placeholder="***************" onChange={e => setPassword(e.target.value)} required />
               </Label>
 
-              <Button type="submit" className="mt-4" block tag={Link} to="/app">
+              { loading ? <div className='mt-4'>Loading....</div> :<Button type="submit" className="mt-4" onClick={()=>{handleSubmit()}}>
                 Log in
-              </Button>
+              </Button> }
 {/* 
               <hr className="my-8" /> */}
 
