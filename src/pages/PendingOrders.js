@@ -17,9 +17,8 @@ import {
 } from '@windmill/react-ui'
 import { EditIcon, TrashIcon } from '../icons'
 
-import response from '../utils/demo/tableData'
-// make a copy of the data, for the second table
-const response2 = response.concat([])
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function PendingOrders() {
   /**
@@ -64,11 +63,30 @@ function PendingOrders() {
       setLoading(false)
     } )
     .catch( err => { console.log(err) })
-  },[])
+  },[data])
 
+  const handleUpdate = (id) =>{
+    fetch('http://localhost:5000/update_delivery/'+ id,{
+      method: 'PUT'
+    })
+    .then(response => response.json())
+    .then( response => {
+      if(response == 'success'){
+        toast('Success',{
+          type:'success'
+        })
+      }else{
+        toast('Failed',{
+          type:'error'
+        })
+      }
+    })
+    .catch(err => {console.log(err)})
+  }
 
   return (
     <>
+    <ToastContainer />
       <PageTitle>Pending Orders</PageTitle>
       <TableContainer className="mb-8">
         <Table>
@@ -123,7 +141,7 @@ function PendingOrders() {
                   <span className="text-xs">{ dt.order_date }</span>
                 </TableCell>
                 <TableCell>
-                  <Button layout="outline">Mark As Delivered</Button>
+                  <Button layout="outline" onClick={()=> handleUpdate(dt._id)}>Mark As Delivered</Button>
                 </TableCell>
               </TableRow>
             ))}
