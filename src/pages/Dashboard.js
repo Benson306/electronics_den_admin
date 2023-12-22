@@ -167,7 +167,7 @@ function Dashboard() {
                     <div className="flex items-center text-sm">
                         <div>
                         {
-                            order.items.map( item => <p className="text-xs text-gray-600 dark:text-gray-400">{item.title} X {item.quantity}</p>)
+                            order.items.map( item => <p className="text-xs text-gray-600 dark:text-gray-400">{item.productName} X {item.quantity}</p>)
                         }
                         </div>
                     </div>

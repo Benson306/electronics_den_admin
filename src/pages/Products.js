@@ -310,7 +310,7 @@ function Products() {
           <Select className="mt-1" onChange={e => setType(e.target.value)}>
             <option value={null}></option>
             <option value="tshirt">Tshirt</option>
-            <option value="hodie">Hoodie</option>
+            <option value="hoodie">Hoodie</option>
           </Select>
         </Label>
 
