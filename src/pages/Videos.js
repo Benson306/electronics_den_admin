@@ -27,7 +27,7 @@ import response from '../utils/demo/tableData'
 // make a copy of the data, for the second table
 const response2 = response.concat([])
 
-function Products() {
+function Videos() {
   /**
    * DISCLAIMER: This code could be badly improved, but for the sake of the example
    * and readability, all the logic for both table are here.
@@ -61,7 +61,7 @@ function Products() {
   // }, [pageTable])
 
   useEffect(()=>{
-    fetch(`${process.env.REACT_APP_API_URL}/get_products`)
+    fetch(`${process.env.REACT_APP_API_URL}/get_videos`)
     .then( data => data.json())
     .then( data => {
         console.log(data)
@@ -84,19 +84,13 @@ function Products() {
     setIsModalOpen(false)
   }
 
-  const [productName, setProductName] = useState(null);
-  const [type, setType] = useState(null);
+  const [title, setTitle] = useState(null);
   const [price, setPrice] = useState(0);
-  const [xSmall, setXSmall] = useState(false);
-  const [small, setSmall] = useState(false);
-  const [medium, setMedium] = useState(false);
-  const [large, setLarge] = useState(false);
-  const [xlarge, setXLarge] = useState(false);
-  const [xxLarge, setxXLarge] = useState(false);
-  const [error, setError] = useState(false);
 
   const [imageSrc, setImageSrc] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
+  const [error, setError] = useState(false);
+
   const handleDrop = (e) => {
     e.preventDefault();
     const file = e.target.files[0];
@@ -114,34 +108,21 @@ function Products() {
 
   const handleSubmit = () => {
 
-        if(productName == null || price < 1 || imageSrc == null || type == null){
+        if(title == null || imageSrc == null || price < 1 ){
             toast('All fields must be filled',{
                 type:'error'
             })
             return
         }
-            
-        if(!xSmall && !small && !medium && xlarge && xxLarge ){
-            toast('Check At least one size',{
-                type:'error'
-            })
-            return
-        }
+        
 
         const formData = new FormData();
 
-        formData.append('productName', productName);
-        formData.append('type', type);
+        formData.append('title', title);
         formData.append('price', price);
-        formData.append('image', imageSrc)
-        formData.append('xSmall', xSmall);
-        formData.append('small', small);
-        formData.append('medium', medium)
-        formData.append('large', large)
-        formData.append('xLarge', xlarge)
-        formData.append('xXLarge', xxLarge)
+        formData.append('thumbnail', imageSrc)
 
-        fetch(`${process.env.REACT_APP_API_URL}/add_product`,{
+        fetch(`${process.env.REACT_APP_API_URL}/add_video`,{
             method: 'POST',
             body: formData
         })
@@ -158,6 +139,7 @@ function Products() {
             }
         })
         .catch((err)=>{
+            setError(true);
             toast('Server Error',{
                 type:'error'
             })
@@ -165,7 +147,7 @@ function Products() {
     }
 
     const handleDeleteItem = ( id ) => {
-        fetch(`${process.env.REACT_APP_API_URL}/del_product/${id}`,{
+        fetch(`${process.env.REACT_APP_API_URL}/del_video/${id}`,{
             method: 'DELETE'
         })
         .then((response)=>{
@@ -186,51 +168,23 @@ function Products() {
         })
     }
 
-    const handleAvailabilityToggle = (id, value) => {
-        fetch(`${process.env.REACT_APP_API_URL}/change_availability/${id}`,{
-            method: 'POST',
-            headers:{
-                'Content-Type':'application/json'
-            },
-            body: JSON.stringify({
-                value: value
-            })
-        })
-        .then((response)=>{
-            if(response.ok){
-                toast('Status Updated',{
-                    type:'success'
-                })
-            }else{
-                toast('Server Error',{
-                    type:'error'
-                })
-            }
-        })
-        .catch((err)=>{
-            toast('Server Error',{
-                type:'error'
-            })
-        })
-    }
-
 
   return (
     <>
-      <PageTitle>Products</PageTitle>
+      <PageTitle>Videos</PageTitle>
       <ToastContainer />
 
       <div className="flex mr-5 mb-5 justify-end">
-        <Button onClick={openModal}>Add A Product</Button>
+        <Button onClick={openModal}>Add A Video</Button>
       </div>
 
       <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <ModalHeader>Add A Product</ModalHeader>
+        <ModalHeader>Add A Video</ModalHeader>
         { error ? <HelperText valid={false}>Unable to Submit Form Due To errors in the fields below</HelperText> : <div></div>  }
         <ModalBody>
 
         <Label>
-          <span>Product Image</span>
+          <span>Thumbanil</span>
           <br />
         <div
             className="flex items-center justify-center w-full mt-1"
@@ -305,96 +259,16 @@ function Products() {
 
         </Label>
 
-        <Label className="mt-4">
-          <span>Product Type</span>
-          <Select className="mt-1" onChange={e => setType(e.target.value)}>
-            <option value={null}></option>
-            <option value="tshirt">Tshirt</option>
-            <option value="hoodie">Hoodie</option>
-          </Select>
-        </Label>
-
         <br />
 
         <Label>
-          <span>Product Name</span>
-          <Input className="mt-1" type="email" placeholder="JaneDoe@gmail.com" onChange={e => setProductName(e.target.value)} required/>
+          <span>Title</span>
+          <Input className="mt-1" type="text" placeholder="New Podcast" onChange={e => setTitle(e.target.value)} required/>
         </Label>
 
         <Label className="mt-4">
           <span>Price</span>
           <Input className="mt-1" type="number" placeholder="0" onChange={e => setPrice(e.target.value)} required/>
-        </Label>
-
-        <Label className="mt-4">
-          <span>Available Sizes:</span>
-          <br />
-          <div className='flex items-center'>
-            <Input type="checkbox" 
-            className="border border-black"
-            checked={xSmall}
-            onChange={(e)=> setXSmall(e.target.checked)}
-             />
-            <span className="ml-2">
-                XS
-            </span>
-          </div>
-
-          <div className='flex items-center'>
-            <Input type="checkbox" 
-            className="border border-black"
-            checked={small}
-            onChange={(e)=> setSmall(e.target.checked)}
-             />
-            <span className="ml-2">
-                SM
-            </span>
-          </div>
-
-          <div className='flex items-center'>
-            <Input type="checkbox" 
-            className="border border-black"
-            checked={medium}
-            onChange={(e)=> setMedium(e.target.checked)}
-             />
-            <span className="ml-2">
-                M
-            </span>
-          </div>
-
-          <div className='flex items-center'>
-            <Input type="checkbox" 
-            className="border border-black" 
-            checked={large}
-            onChange={(e)=> setLarge(e.target.checked)}
-            />
-            <span className="ml-2">
-                L
-            </span>
-          </div>
-
-          <div className='flex items-center'>
-            <Input type="checkbox" 
-            className="border border-black"
-            checked={xlarge}
-            onChange={(e)=> setXLarge(e.target.checked)} />
-            <span className="ml-2">
-                XL
-            </span>
-          </div>
-
-          <div className='flex items-center'>
-            <Input type="checkbox" 
-            className="border border-black"
-            checked={xxLarge}
-            onChange={(e)=> setxXLarge(e.target.checked)}
-            />
-            <span className="ml-2">
-                2XL
-            </span>
-          </div>
-          
-          
         </Label>
 
 
@@ -426,14 +300,10 @@ function Products() {
         <Table>
           <TableHeader>
             <tr>
-                <TableCell>Image</TableCell>
-              <TableCell>Product Type</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Price</TableCell>
-              <TableCell>Available Sizes</TableCell>
-              <TableCell className="text-center">In Stock?</TableCell>
-              {/* <TableCell>Edit</TableCell> */}
-              <TableCell>Delete</TableCell>
+                <TableCell>Thumbnail</TableCell>
+                <TableCell>Title</TableCell>
+                <TableCell>Price</TableCell>
+                <TableCell>Delete</TableCell>
             </tr>
           </TableHeader>
           <TableBody>
@@ -446,51 +316,14 @@ function Products() {
             data.reverse().map((dt, i) => (
               <TableRow key={i}>
                 <TableCell>
-                    <img src={`${process.env.REACT_APP_API_URL}/uploads/${dt.image}`} class="p-0 rounded-t-lg h-40 w-40 object-contain"  alt="No image Uploaded"  />
+                    <img src={`${process.env.REACT_APP_API_URL}/uploads/${dt.thumbnail}`} class="p-0 rounded-t-lg h-40 w-40 object-contain"  alt="No image Uploaded"  />
                 </TableCell>
                 <TableCell>
-                    <span className="text-sm capitalize">{dt.type}</span>
+                    <span className="text-sm capitalize">{dt.title}</span>
                 </TableCell>
                 <TableCell>
-                    <span className="text-sm">{dt.productName}</span>
+                    <span className="text-sm capitalize">Ksh. {dt.price}</span>
                 </TableCell>
-                <TableCell>
-                  <span className="text-sm">Ksh. {dt.price}</span>
-                </TableCell>
-                <TableCell>
-                  <span className="text-xs flex gap-2">
-                    { 
-                        dt.xSmall && <i>XS</i>
-                    }
-                    {
-                        dt.small && <i>SM</i>
-                    }
-                    {
-                        dt.medium && <i>M</i>
-                    }
-                    {
-                        dt.large && <i>L</i>
-                    }
-                    {
-                        dt.xLarge && <i>XL</i>
-                    }
-                    {
-                        dt.xXLarge && <i>2XL</i>
-                    }
-                  </span>
-                </TableCell>
-                <TableCell>
-                <div className='flex justify-center'>
-                    <Input type="checkbox" 
-                    className="border border-black"
-                    checked={dt.availability}
-                    onChange={(e)=> handleAvailabilityToggle( dt._id ,e.target.checked)}
-                    />
-                </div>
-                </TableCell>
-                {/* <TableCell>
-                    <button className='text-xs p-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white'>Edit</button>
-                </TableCell> */}
                 <TableCell>
                     <button onClick={e => {
                         e.preventDefault();
@@ -515,4 +348,4 @@ function Products() {
   )
 }
 
-export default Products
+export default Videos

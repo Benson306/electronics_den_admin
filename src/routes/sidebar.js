@@ -16,6 +16,11 @@ const routes = [
     icon: 'FormsIcon',
     name: 'Products',
   },
+  {
+    path: '/app/videos',
+    icon: 'FormsIcon',
+    name: 'Videos',
+  },
   // {
   //   path: '/app/forms',
   //   icon: 'FormsIcon',

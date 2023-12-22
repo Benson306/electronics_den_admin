@@ -10,6 +10,7 @@ const Buttons = lazy(() => import('../pages/Buttons'))
 const Modals = lazy(() => import('../pages/Modals'))
 const DeliveredOrders = lazy(() => import('../pages/DeliveredOrders'))
 const PendingOrders = lazy(() => import('../pages/PendingOrders'))
+const Videos = lazy(() => import('../pages/Videos'))
 const Page404 = lazy(() => import('../pages/404'))
 const Blank = lazy(() => import('../pages/Blank'))
 
@@ -59,6 +60,10 @@ const routes = [
   {
     path: '/products',
     component: Products
+  },
+  {
+    path: '/videos',
+    component: Videos
   },
   {
     path: '/404',
