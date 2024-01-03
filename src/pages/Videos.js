@@ -61,7 +61,7 @@ function Videos() {
   // }, [pageTable])
 
   useEffect(()=>{
-    fetch(`${process.env.REACT_APP_API_URL}/get_videos`)
+    fetch(`${process.env.REACT_APP_API_URL}/api/get_videos`)
     .then( data => data.json())
     .then( data => {
         console.log(data)
@@ -122,7 +122,7 @@ function Videos() {
         formData.append('price', price);
         formData.append('thumbnail', imageSrc)
 
-        fetch(`${process.env.REACT_APP_API_URL}/add_video`,{
+        fetch(`${process.env.REACT_APP_API_URL}/api/add_video`,{
             method: 'POST',
             body: formData
         })
@@ -147,7 +147,7 @@ function Videos() {
     }
 
     const handleDeleteItem = ( id ) => {
-        fetch(`${process.env.REACT_APP_API_URL}/del_video/${id}`,{
+        fetch(`${process.env.REACT_APP_API_URL}/api/del_video/${id}`,{
             method: 'DELETE'
         })
         .then((response)=>{
@@ -316,7 +316,7 @@ function Videos() {
             data.reverse().map((dt, i) => (
               <TableRow key={i}>
                 <TableCell>
-                    <img src={`${process.env.REACT_APP_API_URL}/uploads/${dt.thumbnail}`} class="p-0 rounded-t-lg h-40 w-40 object-contain"  alt="No image Uploaded"  />
+                    <img src={`${process.env.REACT_APP_API_URL}/api/uploads/${dt.thumbnail}`} class="p-0 rounded-t-lg h-40 w-40 object-contain"  alt="No image Uploaded"  />
                 </TableCell>
                 <TableCell>
                     <span className="text-sm capitalize">{dt.title}</span>

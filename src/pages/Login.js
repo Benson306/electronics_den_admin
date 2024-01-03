@@ -29,7 +29,7 @@ function Login() {
     }
     setLoading(true)
     
-    fetch('http://localhost:5000/login',{
+    fetch(`${process.env.REACT_APP_API_URL}/api/login`,{
       
       method:'POST',
       headers: {
