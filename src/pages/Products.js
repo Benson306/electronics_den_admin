@@ -61,7 +61,7 @@ function Products() {
   // }, [pageTable])
 
   useEffect(()=>{
-    fetch(`${process.env.REACT_APP_API_URL}/api/get_products`)
+    fetch(`${process.env.REACT_APP_API_URL}/get_products`)
     .then( data => data.json())
     .then( data => {
         console.log(data)
@@ -141,7 +141,7 @@ function Products() {
         formData.append('xLarge', xlarge)
         formData.append('xXLarge', xxLarge)
 
-        fetch(`${process.env.REACT_APP_API_URL}/api/add_product`,{
+        fetch(`${process.env.REACT_APP_API_URL}/add_product`,{
             method: 'POST',
             body: formData
         })
@@ -165,7 +165,7 @@ function Products() {
     }
 
     const handleDeleteItem = ( id ) => {
-        fetch(`${process.env.REACT_APP_API_URL}/api/del_product/${id}`,{
+        fetch(`${process.env.REACT_APP_API_URL}/del_product/${id}`,{
             method: 'DELETE'
         })
         .then((response)=>{
@@ -187,7 +187,7 @@ function Products() {
     }
 
     const handleAvailabilityToggle = (id, value) => {
-        fetch(`${process.env.REACT_APP_API_URL}/api/change_availability/${id}`,{
+        fetch(`${process.env.REACT_APP_API_URL}/change_availability/${id}`,{
             method: 'POST',
             headers:{
                 'Content-Type':'application/json'
@@ -446,7 +446,7 @@ function Products() {
             data.reverse().map((dt, i) => (
               <TableRow key={i}>
                 <TableCell>
-                    <img src={`${process.env.REACT_APP_API_URL}/api/uploads/${dt.image}`} class="p-0 rounded-t-lg h-40 w-40 object-contain"  alt="No image Uploaded"  />
+                    <img src={`${process.env.REACT_APP_API_URL}/uploads/${dt.image}`} class="p-0 rounded-t-lg h-40 w-40 object-contain"  alt="No image Uploaded"  />
                 </TableCell>
                 <TableCell>
                     <span className="text-sm capitalize">{dt.type}</span>

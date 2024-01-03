@@ -54,7 +54,7 @@ function PendingOrders() {
   // }, [pageTable])
 
   useEffect(()=>{
-    fetch(`${process.env.REACT_APP_API_URL}/api/GetPendingOrders`)
+    fetch(`${process.env.REACT_APP_API_URL}/GetPendingOrders`)
     .then( data => data.json())
     .then( data => { 
       //setDeliveredOrders(data); 
@@ -66,7 +66,7 @@ function PendingOrders() {
   },[data])
 
   const handleUpdate = (id) =>{
-    fetch(`${process.env.REACT_APP_API_URL}/api/update_delivery/${id}`,{
+    fetch(`${process.env.REACT_APP_API_URL}/update_delivery/${id}`,{
       method: 'PUT'
     })
     .then(response => response.json())

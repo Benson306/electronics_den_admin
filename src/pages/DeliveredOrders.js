@@ -55,7 +55,7 @@ function Tables() {
   // }, [pageTable])
 
   useEffect(()=>{
-    fetch(`${process.env.REACT_APP_API_URL}/api/GetDeliveredOrders`)
+    fetch(`${process.env.REACT_APP_API_URL}/GetDeliveredOrders`)
     .then( data => data.json())
     .then( data => { 
       //setDeliveredOrders(data); 

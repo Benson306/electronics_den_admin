@@ -79,7 +79,7 @@ function Modals() {
   },[confPassword])
 
   useEffect(()=>{
-    fetch(`${process.env.REACT_APP_API_URL}/api/users`)
+    fetch(`${process.env.REACT_APP_API_URL}/users`)
     .then(result => result.json())
     .then(result =>{
         setData(result)
@@ -94,7 +94,7 @@ function Modals() {
 
     if(same && passLength && email.length > 3){
       console.log({ email, password});
-      fetch(`${process.env.REACT_APP_API_URL}/api/add_user`,{
+      fetch(`${process.env.REACT_APP_API_URL}/add_user`,{
         method: 'POST',
         headers: {
           'Content-Type':'application/json'
@@ -135,7 +135,7 @@ function Modals() {
 
   function handleRemove(id){
     console.log(id);
-    fetch(`${process.env.REACT_APP_API_URL}/api/delete/${id}`,{
+    fetch(`${process.env.REACT_APP_API_URL}/delete/${id}`,{
       method:'DELETE'
     })
     .then( result => result.json())

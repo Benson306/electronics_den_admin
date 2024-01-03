@@ -57,7 +57,7 @@ function Dashboard() {
   useEffect(() => {
     
     
-    fetch(`${process.env.REACT_APP_API_URL}/api/GetAllOrders`)
+    fetch(`${process.env.REACT_APP_API_URL}/GetAllOrders`)
     .then( data => data.json())
     .then( data => { 
         setAllOrders(data.length); 
@@ -71,12 +71,12 @@ function Dashboard() {
       } )
     .catch( err => { console.log(err); setLoading(false); })
 
-    fetch(`${process.env.REACT_APP_API_URL}/api/GetPendingOrders`)
+    fetch(`${process.env.REACT_APP_API_URL}/GetPendingOrders`)
     .then( data => data.json())
     .then( data => { setPendingOrders(data.length) } )
     .catch( err => { console.log(err) })
 
-    fetch(`${process.env.REACT_APP_API_URL}/api/GetDeliveredOrders`)
+    fetch(`${process.env.REACT_APP_API_URL}/GetDeliveredOrders`)
     .then( data => data.json())
     .then( data => { setDeliveredOrders(data.length); } )
     .catch( err => { console.log(err) })
