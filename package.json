@@ -23,7 +23,6 @@
     "chart.js": "2.9.3",
     "classnames": "2.2.6",
     "faker": "4.1.0",
-    "nvm": "^0.0.4",
     "react": "^16.13.1",
     "react-chartjs-2": "2.9.0",
     "react-dom": "^16.13.1",
