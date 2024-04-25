@@ -61,12 +61,10 @@ function Dashboard() {
     .then( data => data.json())
     .then( data => { 
         setAllOrders(data.length); 
-        setOrders(data);
-        setTotalResults(data.length);
         data.map(dt => {
           setTotal(ttl => ttl + dt.delivery_cost + Math.floor(dt.total_price) );
         })
-        setData(data.reverse().slice((page - 1) * resultsPerPage, page * resultsPerPage))
+        setData(data)
         setLoading(false);
       } )
     .catch( err => { console.log(err); setLoading(false); })
@@ -152,7 +150,7 @@ function Dashboard() {
             </TableRow>
             }
             { !loading && 
-            data.map((order, i) => (
+            data.slice(Math.max(data.length - 5, 0)).reverse().map((order, i) => (
               <TableRow key={i}>
                 <TableCell>
                   <div className="flex items-center text-sm">
@@ -195,12 +193,12 @@ function Dashboard() {
           </TableBody>
         </Table>
         <TableFooter>
-          <Pagination
+          {/* <Pagination
             totalResults={totalResults}
             resultsPerPage={resultsPerPage}
             label="Table navigation"
             onChange={onPageChange}
-          />
+          /> */}
         </TableFooter>
       </TableContainer>
 
