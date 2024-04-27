@@ -229,7 +229,7 @@ function Products() {
         { error ? <HelperText valid={false}>Unable to Submit Form Due To errors in the fields below</HelperText> : <div></div>  }
         <ModalBody>
 
-        <Label>
+        <Label className="mt-2">
           <span>Product Image</span>
           <br />
         <div
@@ -313,9 +313,6 @@ function Products() {
             <option value="hoodie">Hoodie</option>
           </Select>
         </Label>
-
-        <br />
-
         <Label>
           <span>Product Name</span>
           <Input className="mt-1" type="email" placeholder="JaneDoe@gmail.com" onChange={e => setProductName(e.target.value)} required/>
@@ -329,13 +326,14 @@ function Products() {
         <Label className="mt-4">
           <span>Available Sizes:</span>
           <br />
+          <div className="flex gap-4">
           <div className='flex items-center'>
             <Input type="checkbox" 
             className="border border-black"
             checked={xSmall}
             onChange={(e)=> setXSmall(e.target.checked)}
              />
-            <span className="ml-2">
+            <span className="ml-1">
                 XS
             </span>
           </div>
@@ -346,7 +344,7 @@ function Products() {
             checked={small}
             onChange={(e)=> setSmall(e.target.checked)}
              />
-            <span className="ml-2">
+            <span className="ml-1">
                 SM
             </span>
           </div>
@@ -357,7 +355,7 @@ function Products() {
             checked={medium}
             onChange={(e)=> setMedium(e.target.checked)}
              />
-            <span className="ml-2">
+            <span className="ml-1">
                 M
             </span>
           </div>
@@ -368,7 +366,7 @@ function Products() {
             checked={large}
             onChange={(e)=> setLarge(e.target.checked)}
             />
-            <span className="ml-2">
+            <span className="ml-1">
                 L
             </span>
           </div>
@@ -378,7 +376,7 @@ function Products() {
             className="border border-black"
             checked={xlarge}
             onChange={(e)=> setXLarge(e.target.checked)} />
-            <span className="ml-2">
+            <span className="ml-1">
                 XL
             </span>
           </div>
@@ -389,14 +387,12 @@ function Products() {
             checked={xxLarge}
             onChange={(e)=> setxXLarge(e.target.checked)}
             />
-            <span className="ml-2">
+            <span className="ml-1">
                 2XL
             </span>
           </div>
-          
-          
+          </div>
         </Label>
-
 
         </ModalBody>
         <ModalFooter>
