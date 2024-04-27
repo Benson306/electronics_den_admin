@@ -90,7 +90,7 @@ function Login() {
                 <Input className="mt-1" type="password" placeholder="***************" onChange={e => setPassword(e.target.value)} required />
               </Label>
 
-              { loading ? <div className='mt-4'>Loading....</div> :<Button type="submit" className="mt-4" onClick={()=>{handleSubmit()}}>
+              { loading ? <div className='mt-4 border text-black dark:text-purple-600 border-black dark:border-purple-600 p-2 text-center bg-transparent rounded'>Loading....</div> :<Button type="submit" className="mt-4" onClick={()=>{handleSubmit()}}>
                 Log in
               </Button> }
 {/* 

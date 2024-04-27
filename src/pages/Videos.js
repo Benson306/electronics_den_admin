@@ -44,6 +44,7 @@ function Videos() {
   // setup data for every table
   const [loading, setLoading] = useState(true)
 
+  const [change, setChange] = useState(false)
   // pagination setup
   const resultsPerPage = 5
 
@@ -71,7 +72,7 @@ function Videos() {
       setLoading(false);
     } )
     .catch( err => { console.log(err) })
-  },[])
+  },[change])
 
 
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -131,7 +132,8 @@ function Videos() {
                 closeModal();
                 toast('Success',{
                     type:'success'
-                })
+                });
+                setChange(true);
             }else{
                 toast('Server Error',{
                     type:'error'

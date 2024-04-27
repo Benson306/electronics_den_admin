@@ -60,6 +60,8 @@ function Products() {
 
   // }, [pageTable])
 
+  const [change, setChange] = useState(false);
+
   useEffect(()=>{
     fetch(`${process.env.REACT_APP_API_URL}/get_products`)
     .then( data => data.json())
@@ -70,8 +72,7 @@ function Products() {
       setLoading(false);
     } )
     .catch( err => { console.log(err) })
-  },[])
-
+  },[change])
 
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -96,6 +97,7 @@ function Products() {
 
   const [imageSrc, setImageSrc] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
+
   const handleDrop = (e) => {
     e.preventDefault();
     const file = e.target.files[0];
@@ -150,7 +152,11 @@ function Products() {
                 toast('Success',{
                     type:'success'
                 })
+                setChange(true)
             }else{
+              response.json().then( err => {
+                console.log(err)
+                })
                 toast('Server Error',{
                     type:'error'
                 })
@@ -172,6 +178,7 @@ function Products() {
                 toast('Success',{
                     type:'success'
                 })
+                setChange(true)
             }else{
                 toast('Server Error',{
                     type:'error'
@@ -312,17 +319,17 @@ function Products() {
             <option value="hoodie">Hoodie</option>
           </Select>
         </Label>
-        <Label>
+        <Label className="mt-2">
           <span>Product Name</span>
           <Input className="mt-1" type="email" placeholder="JaneDoe@gmail.com" onChange={e => setProductName(e.target.value)} required/>
         </Label>
 
-        <Label className="mt-4">
+        <Label className="mt-2">
           <span>Price</span>
           <Input className="mt-1" type="number" placeholder="0" onChange={e => setPrice(e.target.value)} required/>
         </Label>
 
-        <Label className="mt-4">
+        <Label className="mt-2">
           <span>Available Sizes:</span>
           <br />
           <div className="flex gap-4">
