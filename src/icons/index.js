@@ -32,6 +32,7 @@ import { ReactComponent as PendingIcon } from './pending.svg'
 import { ReactComponent as OrderIcon } from './order.svg'
 import { ReactComponent as DeliveredIcon } from './delivered.svg'
 import { ReactComponent as PersonIcon } from './person.svg'
+import { ReactComponent as PlayIcon } from './play.svg'
 
 export {
   ButtonsIcon,
@@ -67,5 +68,6 @@ export {
   PendingIcon,
   OrderIcon,
   DeliveredIcon,
-  PersonIcon
+  PersonIcon,
+  PlayIcon
 }

@@ -18,7 +18,7 @@ const routes = [
   },
   {
     path: '/app/videos',
-    icon: 'FormsIcon',
+    icon: 'PlayIcon',
     name: 'Videos',
   },
   // {
