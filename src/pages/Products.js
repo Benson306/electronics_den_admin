@@ -64,7 +64,6 @@ function Products() {
     fetch(`${process.env.REACT_APP_API_URL}/get_products`)
     .then( data => data.json())
     .then( data => {
-        console.log(data)
       //setDeliveredOrders(data); 
       setTotalResults(data.length);
       setData(data.reverse().slice((page - 1) * resultsPerPage, page * resultsPerPage))
