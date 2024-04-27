@@ -7,7 +7,6 @@ const Layout = lazy(() => import('./containers/Layout'))
 const Login = lazy(() => import('./pages/Login'))
 const CreateAccount = lazy(() => import('./pages/CreateAccount'))
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'))
-s
 function App() {
 
   const { authUser } = useContext(AuthContext);
