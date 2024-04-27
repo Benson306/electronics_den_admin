@@ -238,12 +238,7 @@ function Products() {
             onDragOver={handleDragOver}
             >
             {imageSrc ? (
-                <div className="h-40 w-full relative">
-                <img
-                    src={imageUrl}
-                    alt="Preview"
-                    className="w-full h-full object-contain rounded-lg"
-                />
+                <div className="h-40 w-full relative flex">
                 <button
                     className="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1"
                     onClick={handleDelete}
@@ -263,6 +258,11 @@ function Products() {
                     />
                     </svg>
                 </button>
+                <img
+                    src={imageUrl}
+                    alt="Preview"
+                    className="w-full h-full object-contain rounded-lg"
+                />
                 </div>
             ) : (
                 <label
