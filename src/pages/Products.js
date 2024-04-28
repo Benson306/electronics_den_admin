@@ -178,7 +178,7 @@ function Products() {
                 toast('Success',{
                     type:'success'
                 })
-                setChange(true)
+                setChange(!change)
             }else{
                 toast('Server Error',{
                     type:'error'
@@ -445,7 +445,7 @@ function Products() {
 
             data.length === 0 ? <TableCell>No Records</TableCell> :
             
-            data.reverse().map((dt, i) => (
+            data.map((dt, i) => (
               <TableRow key={i}>
                 <TableCell>
                     <img src={`${process.env.REACT_APP_API_URL}/uploads/${dt.image}`} class="p-0 rounded-t-lg h-40 w-40 object-contain"  alt="No image Uploaded"  />

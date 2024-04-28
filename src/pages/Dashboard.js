@@ -87,7 +87,7 @@ function Dashboard() {
 
       {/* <!-- Cards --> */}
       <div className="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4">
-        <InfoCard title="Total Revenue" value={`Ksh. ${total}`}>
+        <InfoCard title="Total Sales" value={`Ksh. ${total}`}>
           <RoundIcon
             icon={RevenueIcon}
             iconColorClass="text-orange-500 dark:text-orange-100"

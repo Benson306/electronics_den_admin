@@ -87,6 +87,8 @@ function Videos() {
 
   const [title, setTitle] = useState(null);
   const [price, setPrice] = useState(0);
+  const [hours, setHours] = useState(0);
+  const [minutes, setMinutes] = useState(0);
 
   const [imageSrc, setImageSrc] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
@@ -109,17 +111,18 @@ function Videos() {
 
   const handleSubmit = () => {
 
-        if(title == null || imageSrc == null || price < 1 ){
+        if(title == null || imageSrc == null || price < 1 || minutes < 0 ){
             toast('All fields must be filled',{
                 type:'error'
             })
             return
         }
-        
 
         const formData = new FormData();
 
         formData.append('title', title);
+        formData.append('hours', hours);
+        formData.append('minutes', minutes);
         formData.append('price', price);
         formData.append('thumbnail', imageSrc)
 
@@ -157,11 +160,13 @@ function Videos() {
                 toast('Success',{
                     type:'success'
                 })
+                setChange(!change);
             }else{
                 toast('Server Error',{
                     type:'error'
                 })
             }
+
         })
         .catch((err)=>{
             toast('Server Error',{
@@ -186,7 +191,7 @@ function Videos() {
         <ModalBody>
 
         <Label>
-          <span>Thumbanil</span>
+          <span>Thumbnail</span>
           <br />
         <div
             className="flex items-center justify-center w-full mt-1"
@@ -195,11 +200,6 @@ function Videos() {
             >
             {imageSrc ? (
                 <div className="h-40 w-full relative">
-                <img
-                    src={imageUrl}
-                    alt="Preview"
-                    className="w-full h-full object-contain rounded-lg"
-                />
                 <button
                     className="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1"
                     onClick={handleDelete}
@@ -219,6 +219,11 @@ function Videos() {
                     />
                     </svg>
                 </button>
+                <img
+                    src={imageUrl}
+                    alt="Preview"
+                    className="w-full h-full object-contain rounded-lg"
+                />
                 </div>
             ) : (
                 <label
@@ -268,6 +273,20 @@ function Videos() {
           <Input className="mt-1" type="text" placeholder="New Podcast" onChange={e => setTitle(e.target.value)} required/>
         </Label>
 
+        <Label className="mt-2">
+          <span>Duration</span>
+          <div className='flex gap-4'>
+              <div className='flex gap-4 items-center'>
+                <Input className="mt-1" type="number" min={0} max={24} onChange={e => setHours(e.target.value)} required/>
+                <span>Hrs.</span>
+              </div>
+              <div className='flex gap-4 items-center'>
+                <Input className="mt-1" type="number" min={0} max={59} onChange={e => setMinutes(e.target.value)} required/>
+                <span>Mins.</span>
+              </div>
+          </div>
+        </Label>
+
         <Label className="mt-4">
           <span>Price</span>
           <Input className="mt-1" type="number" placeholder="0" onChange={e => setPrice(e.target.value)} required/>
@@ -304,6 +323,7 @@ function Videos() {
             <tr>
                 <TableCell>Thumbnail</TableCell>
                 <TableCell>Title</TableCell>
+                <TableCell>Duration</TableCell>
                 <TableCell>Price</TableCell>
                 <TableCell>Delete</TableCell>
             </tr>
@@ -315,13 +335,21 @@ function Videos() {
 
             data.length === 0 ? <TableCell>No Records</TableCell> :
             
-            data.reverse().map((dt, i) => (
+            data.map((dt, i) => (
               <TableRow key={i}>
                 <TableCell>
                     <img src={`${process.env.REACT_APP_API_URL}/uploads/${dt.thumbnail}`} class="p-0 rounded-t-lg h-40 w-40 object-contain"  alt="No image Uploaded"  />
                 </TableCell>
                 <TableCell>
                     <span className="text-sm capitalize">{dt.title}</span>
+                </TableCell>
+                <TableCell>
+                    { 
+                      dt.hours > 0 ? 
+                      <span className="text-sm capitalize">{dt.hours} Hrs {dt.minutes} Mins</span>
+                        :
+                      <span className="text-sm capitalize">{dt.minutes} Mins</span>
+                    }
                 </TableCell>
                 <TableCell>
                     <span className="text-sm capitalize">Ksh. {dt.price}</span>
