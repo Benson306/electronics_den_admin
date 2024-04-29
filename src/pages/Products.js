@@ -207,6 +207,7 @@ function Products() {
                 toast('Status Updated',{
                     type:'success'
                 })
+                setChange(!change);
             }else{
                 toast('Server Error',{
                     type:'error'

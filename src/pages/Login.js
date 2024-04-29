@@ -8,6 +8,7 @@ import { Label, Input, Button } from '@windmill/react-ui'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AuthContext } from '../context/AuthContext'
+import { response } from 'express'
 
 function Login() {
 
@@ -37,24 +38,27 @@ function Login() {
       },
       body: JSON.stringify({ email, password})
     })
-    .then(res => res.json())
-    .then(res =>{
-      if(res === 'success'){
-
-        toast('Success',{
-          type:'success'
-        })
-        login(email);
-        history.push('/app')
+    .then(res => {
+      if(res.ok){
+        res.json().then(response =>{
+          toast('Success',{
+              type:'success'
+            })
+            login(email);
+            history.push('/app')
+          });
+          setLoading(false);
       }else{
-        
         toast('Wrong Credentials',{
           type:'error'
-        })
+        });
+        setLoading(false);
       }
-      setLoading(false);
     })
-    .catch(err => {setLoading(false); console.log(err)})
+    .catch(err => {
+      setLoading(false); 
+      console.log(err)
+    })
 
     //setLoading(false);
   }

@@ -35,16 +35,41 @@ function Modals() {
     setIsModalOpen(false)
   }
 
+  const [isModalDelOpen, setIsModalDelOpen] = useState(false)
+
+  function openDelModal() {
+    setIsModalDelOpen(true)
+  }
+
+  function closeDelModal() {
+    setIsModalDelOpen(false)
+  }
+
+  const [isModalChangeOpen, setIsModalChangeOpen] = useState(false)
+
+  function openChangeModal() {
+    setIsModalChangeOpen(true)
+  }
+
+  function closeChangeModal() {
+    setIsModalChangeOpen(false)
+  }
+
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confPassword, setConfPassword] = useState('');
+  const [master, setMaster] = useState(null);
+  const [delMasterPass, setDelMAasterPass] = useState(null);
+  const [delId, setDelId] = useState(null);
   const [passLength, setPassLength] = useState(false);
   const [same, setSame] = useState(false);
   const [error, setError] = useState(false);
 
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const [change, setChange] = useState(false);
 
   useEffect(()=>{
     if(password.length > 7){
@@ -88,65 +113,103 @@ function Modals() {
     .catch(err => {
       console.log(err)
     })
-  })
+  },[change])
 
   function handleSubmit(){
 
-    if(same && passLength && email.length > 3){
-      console.log({ email, password});
+    if(same && passLength && email.length > 3 && master !== null){
       fetch(`${process.env.REACT_APP_API_URL}/add_user`,{
         method: 'POST',
         headers: {
           'Content-Type':'application/json'
         },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email, password, master_password: master })
       })
-      .then(data => data.json())
-      .then( data => {
-        console.log(data);
-        if(data === 'Added'){
-          toast('Success',{
-            type:'success'
+      .then(data => {
+        if(data.ok){
+          data.json().then(response =>{
+            toast('Success',{
+              type:'success'
+            })
+            setChange(!change);
+            closeModal();
           })
-          
-          closeModal();
-            
-        }else if(data === 'Exists'){
-          toast('Failed. Email is Already Used',{
-            type:'error'
-          })
-        }else if(data === 'Not Added'){
-          toast('Failed.Try Again',{
-            type:'error'
+        }else{
+          data.json().then(response => {
+            toast(response,{
+              type:'error'
+            })
           })
         }
       })
       .catch(err => {
         toast('Failed.Try Again',{
-        type:'error'
-      })
+          type:'error'
+        })
       }
       )
     }else{
       setError(true);
     }
-    
   }
 
-  function handleRemove(id){
-    console.log(id);
-    fetch(`${process.env.REACT_APP_API_URL}/delete/${id}`,{
+  function handleSubmitDelete(master, id){
+    fetch(`${process.env.REACT_APP_API_URL}/delete/${master}/${id}`,{
       method:'DELETE'
     })
-    .then( result => result.json())
     .then( result => {
-      if(result ===  'success'){
-        toast('Success',{
-          type:'success'
+      if(result.ok){
+        result.json().then(res =>{
+          toast('Success',{
+            type:'success'
+          });
+          setChange(!change);
+          closeDelModal();
         })
       }else{
-        toast('Failed',{
-          type:'error'
+        result.json().then(res =>{
+          toast(res,{
+            type:'error'
+          });
+        })
+      }
+    })
+    .catch(err =>{
+      toast('Failed',{
+        type:'error'
+      })
+    })
+  }
+
+  const [newPassword, setNewPassword] = useState(null);
+  const [changeMaster, setChangeMaster] = useState(null);
+  const [changeId, setChangeId] = useState(null);
+
+  function handleChangePassword(master, new_pass, user_id){
+    fetch(`${process.env.REACT_APP_API_URL}/change_password`,{
+      method:'POST',
+      headers: {
+        'Content-Type':'application/json'
+      },
+      body: JSON.stringify({
+        master_password: master,
+        new_password: newPassword,
+        user_id
+      })
+    })
+    .then( result => {
+      if(result.ok){
+        result.json().then(res =>{
+          toast('Success',{
+            type:'success'
+          });
+          closeChangeModal();
+        })
+      }else{
+        result.json().then(res =>{
+          toast(res,{
+            type:'error'
+          });
         })
       }
     })
@@ -190,7 +253,10 @@ function Modals() {
           { same ? <div></div> : <HelperText valid={false}>Password Does Not Match.</HelperText>  }
         </Label>
 
-
+        <Label className="mt-4">
+          <span>Master Password</span>
+          <Input className="mt-1" type="password" placeholder="Master password" onChange={e => setMaster(e.target.value)} required />
+        </Label>
         </ModalBody>
         <ModalFooter>
           <div className="hidden sm:block">
@@ -214,11 +280,79 @@ function Modals() {
         </ModalFooter>
       </Modal>
 
+      <Modal isOpen={isModalDelOpen} onClose={closeDelModal}>
+        <ModalHeader>Confirm Delete</ModalHeader>
+        <ModalBody>
+        <Label>
+          <span>Master Password</span>
+          <Input className="mt-1" type="password" placeholder="******" onChange={e => setDelMAasterPass(e.target.value)} required/>
+        </Label>
+
+        </ModalBody>
+        <ModalFooter>
+          <div className="hidden sm:block">
+            <Button layout="outline" onClick={closeDelModal}>
+              Cancel
+            </Button>
+          </div>
+          <div className="hidden sm:block" onClick={() => handleSubmitDelete(delMasterPass, delId)}>
+            <Button>Submit</Button>
+          </div>
+          <div className="block w-full sm:hidden">
+            <Button block size="large" layout="outline" onClick={closeDelModal}>
+              Cancel
+            </Button>
+          </div>
+          <div className="block w-full sm:hidden">
+            <Button block size="large" onClick={() => handleSubmitDelete(delMasterPass, delId)}>
+              Submit
+            </Button>
+          </div>
+        </ModalFooter>
+      </Modal>
+
+      <Modal isOpen={isModalChangeOpen} onClose={closeChangeModal}>
+        <ModalHeader>Change Password</ModalHeader>
+        <ModalBody>
+        <Label>
+          <span>New Password</span>
+          <Input className="mt-1" type="password" placeholder="******" onChange={e => setNewPassword(e.target.value)} required/>
+        </Label>
+
+        <Label>
+          <span>Master Password</span>
+          <Input className="mt-1" type="password" placeholder="******" onChange={e => setChangeMaster(e.target.value)} required/>
+        </Label>
+
+        </ModalBody>
+        <ModalFooter>
+          <div className="hidden sm:block">
+            <Button layout="outline" onClick={closeChangeModal}>
+              Cancel
+            </Button>
+          </div>
+          <div className="hidden sm:block" onClick={() => handleChangePassword(changeMaster, newPassword, changeId)}>
+            <Button>Submit</Button>
+          </div>
+          <div className="block w-full sm:hidden">
+            <Button block size="large" layout="outline" onClick={closeChangeModal}>
+              Cancel
+            </Button>
+          </div>
+          <div className="block w-full sm:hidden">
+            <Button block size="large" onClick={() => handleChangePassword(changeMaster, newPassword, changeId)}>
+              Submit
+            </Button>
+          </div>
+        </ModalFooter>
+      </Modal>
+
       <TableContainer className="mb-8">
         <Table>
           <TableHeader>
             <tr>
               <TableCell>Email</TableCell>
+              <TableCell>Change Password?</TableCell>
               <TableCell>Actions</TableCell>
             </tr>
           </TableHeader>
@@ -240,11 +374,20 @@ function Modals() {
                   </div>
                 </TableCell>
                 <TableCell>
+                  <button className='text-sm underline text-blue-500 hover:text-blue-600' onClick={()=>{
+                    setChangeId(user._id);
+                    openChangeModal();
+                  }}>change password</button>
+                </TableCell>
+                <TableCell>
                   <div className="flex items-center space-x-4">
                     {/* <Button layout="link" size="icon" aria-label="Edit">
                       <EditIcon className="w-5 h-5" aria-hidden="true" />
                     </Button> */}
-                    <Button layout="link" size="icon" aria-label="Delete" onClick={()=>handleRemove(user._id)}>
+                    <Button layout="link" size="icon" aria-label="Delete" onClick={()=>{
+                      setDelId(user._id);
+                      openDelModal();
+                    }}>
                       <TrashIcon className="w-5 h-5" aria-hidden="true" />
                     </Button>
                   </div>
