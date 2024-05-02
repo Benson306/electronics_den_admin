@@ -161,7 +161,7 @@ function DeliveryLocations() {
       <div className="flex mr-5 mb-5 justify-between">
         <input type="text" 
             placeholder='Search ...' 
-            className='p-2 rounded-lg bg-transparent border border-gray-300 dark:border-gray-500' 
+            className='p-2 rounded-lg bg-transparent border border-gray-300 dark:border-gray-500 text-black dark:text-gray-500' 
             onChange={(e)=> e.target.value === "" ? setSearch(null) : setSearch(e.target.value)}
         />
         <Button onClick={openModal}>Add new location</Button>
