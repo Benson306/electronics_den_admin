@@ -41,6 +41,11 @@ const routes = [
   //   icon: 'ButtonsIcon',
   //   name: 'Buttons',
   // },
+    {
+    path: '/app/locations',
+    icon: 'LocationIcon',
+    name: 'Delivery Locations',
+  },
   {
     icon: 'DeliveredIcon',
     name: 'Orders',

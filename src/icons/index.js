@@ -33,6 +33,7 @@ import { ReactComponent as OrderIcon } from './order.svg'
 import { ReactComponent as DeliveredIcon } from './delivered.svg'
 import { ReactComponent as PersonIcon } from './person.svg'
 import { ReactComponent as PlayIcon } from './play.svg'
+import { ReactComponent as LocationIcon } from './location.svg'
 
 export {
   ButtonsIcon,
@@ -69,5 +70,6 @@ export {
   OrderIcon,
   DeliveredIcon,
   PersonIcon,
-  PlayIcon
+  PlayIcon,
+  LocationIcon
 }

@@ -11,6 +11,7 @@ const Modals = lazy(() => import('../pages/Modals'))
 const DeliveredOrders = lazy(() => import('../pages/DeliveredOrders'))
 const PendingOrders = lazy(() => import('../pages/PendingOrders'))
 const Videos = lazy(() => import('../pages/Videos'))
+const DeliveryLocations = lazy(() => import('../pages/DeliveryLocations'))
 const Page404 = lazy(() => import('../pages/404'))
 const Blank = lazy(() => import('../pages/Blank'))
 
@@ -60,6 +61,10 @@ const routes = [
   {
     path: '/products',
     component: Products
+  },
+  {
+    path: '/locations',
+    component: DeliveryLocations
   },
   {
     path: '/videos',

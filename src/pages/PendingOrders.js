@@ -58,10 +58,19 @@ function PendingOrders() {
     .then( data => data.json())
     .then( data => { 
       //setDeliveredOrders(data); 
-      setTotalResults(data.length);
-      setData(data.reverse().slice((page - 1) * resultsPerPage, page * resultsPerPage))
-      setLoading(false)
-    } )
+
+      Promise.all(
+        data.map(order =>
+          fetch(`${process.env.REACT_APP_API_URL}/get_location/${order.deliveryLocation}`)
+            .then(response => response.json())
+            .then(location => ({ ...order, deliveryLocation: location.town  }))
+        )
+      ).then(ordersWithData => {
+        setTotalResults(ordersWithData.length);
+        setData(ordersWithData.reverse().slice((page - 1) * resultsPerPage, page * resultsPerPage))
+        setLoading(false);
+      });
+    })
     .catch( err => { console.log(err) })
   },[data])
 
@@ -97,6 +106,7 @@ function PendingOrders() {
               <TableCell>Delivery Location</TableCell>
               <TableCell>Delivery Cost</TableCell>
               <TableCell>Items Cost</TableCell>
+              <TableCell>Total Cost</TableCell>
               <TableCell>Order Date</TableCell>
               <TableCell>Actions</TableCell>
             </tr>
@@ -113,7 +123,8 @@ function PendingOrders() {
                   <div className="flex items-center text-sm">
                     {/* <Avatar className="hidden mr-3 md:block" src={user.avatar} alt="User avatar" /> */}
                     <div>
-                      <p className="font-semibold">{dt.email}</p>
+                      <p className="font-semibold">{dt.first_name} {dt.second_name}</p>
+                      <p className="text-sm">{dt.email}</p>
                       <p className="text-xs text-gray-600 dark:text-gray-400">{dt.phone_number}</p>
                     </div>
                   </div>
@@ -136,6 +147,9 @@ function PendingOrders() {
                 </TableCell>
                 <TableCell>
                   <span className="text-xs">Ksh. {Math.floor(dt.total_price) }</span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-xs">Ksh. {Math.floor(dt.total_price) +  dt.delivery_cost}</span>
                 </TableCell>
                 <TableCell>
                   <span className="text-xs">{ dt.order_date }</span>
