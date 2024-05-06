@@ -435,7 +435,7 @@ function Products() {
               <TableCell>Price</TableCell>
               <TableCell>Available Sizes</TableCell>
               <TableCell className="text-center">In Stock?</TableCell>
-              {/* <TableCell>Edit</TableCell> */}
+              <TableCell>Edit</TableCell>
               <TableCell>Delete</TableCell>
             </tr>
           </TableHeader>
@@ -491,9 +491,9 @@ function Products() {
                     />
                 </div>
                 </TableCell>
-                {/* <TableCell>
+                <TableCell>
                     <button className='text-xs p-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white'>Edit</button>
-                </TableCell> */}
+                </TableCell>
                 <TableCell>
                     <button onClick={e => {
                         e.preventDefault();

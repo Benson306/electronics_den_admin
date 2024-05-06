@@ -70,49 +70,56 @@ function Videos() {
       setTotalResults(data.length);
       setData(data.reverse().slice((page - 1) * resultsPerPage, page * resultsPerPage))
       setLoading(false);
-    } )
+    })
     .catch( err => { console.log(err) })
   },[change])
 
 
-  const [isModalOpen, setIsModalOpen] = useState(false)
+    const [isModalOpen, setIsModalOpen] = useState(false)
 
-  function openModal() {
-    setIsModalOpen(true)
-  }
+    function openModal() {
+      setIsModalOpen(true)
+    }
 
-  function closeModal() {
-    setIsModalOpen(false)
-  }
+    function closeModal() {
+      setIsModalOpen(false)
+    }
 
-  const [title, setTitle] = useState(null);
-  const [price, setPrice] = useState(0);
-  const [hours, setHours] = useState(0);
-  const [minutes, setMinutes] = useState(0);
+    const [title, setTitle] = useState(null);
+    const [price, setPrice] = useState(0);
+    const [hours, setHours] = useState(0);
+    const [minutes, setMinutes] = useState(0);
 
-  const [imageSrc, setImageSrc] = useState(null);
-  const [imageUrl, setImageUrl] = useState(null);
-  const [error, setError] = useState(false);
+    const [imageSrc, setImageSrc] = useState(null);
+    const [imageUrl, setImageUrl] = useState(null);
+    const [error, setError] = useState(false);
 
-  const handleDrop = (e) => {
-    e.preventDefault();
-    const file = e.target.files[0];
-    setImageSrc(file);
-    setImageUrl(URL.createObjectURL(file));
-  };
+    const handleDrop = (e) => {
+      e.preventDefault();
+      const file = e.target.files[0];
+      setImageSrc(file);
+      setImageUrl(URL.createObjectURL(file));
+    };
 
-  const handleDragOver = (e) => {
-    e.preventDefault();
-  };
+    const handleDragOver = (e) => {
+      e.preventDefault();
+    };
 
-  const handleDelete = () => {
-    setImageSrc(null);
-  };
+    const handleDelete = () => {
+      setImageSrc(null);
+    };
 
-  const handleSubmit = () => {
+    const handleSubmit = () => {
 
         if(title == null || imageSrc == null || price < 1 || minutes < 0 ){
             toast('All fields must be filled',{
+                type:'error'
+            })
+            return
+        }
+
+        if(minutes > 59 ){
+            toast('Invalid minutes',{
                 type:'error'
             })
             return
@@ -136,6 +143,12 @@ function Videos() {
                 toast('Success',{
                     type:'success'
                 });
+                setTitle(null);
+                setPrice(0);
+                setHours(0);
+                setMinutes(0);
+                setImageSrc(null);
+                setImageUrl(null);
                 setChange(true);
             }else{
                 toast('Server Error',{
@@ -175,6 +188,79 @@ function Videos() {
         })
     }
 
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [editId, setEditId] = useState(null);
+
+    function openEditModal() {
+      setIsEditModalOpen(true)
+    }
+
+    function closeEditModal() {
+      setEditId(null);
+      setTitle(null);
+      setPrice(0);
+      setHours(0);
+      setMinutes(0);
+      setImageSrc(null);
+      setImageUrl(null);
+      setIsEditModalOpen(false)
+    }
+
+    const handleEditSubmit = () => {
+
+      if(title == null || imageSrc == null || price < 1 || minutes < 0 ){
+          toast('All fields must be filled',{
+              type:'error'
+          })
+          return
+      }
+      
+      if(minutes > 59 ){
+          toast('Invalid minutes',{
+              type:'error'
+          })
+          return
+      }
+
+      const formData = new FormData();
+
+      formData.append('title', title);
+      formData.append('hours', hours);
+      formData.append('minutes', minutes);
+      formData.append('price', price);
+      formData.append('thumbnail', imageSrc)
+
+      fetch(`http://localhost:5000/edit_video/${editId}`,{
+          method: 'PUT',
+          body: formData
+      })
+      .then((response)=>{
+          if(response.ok){
+              closeEditModal();
+              toast('Success',{
+                  type:'success'
+              });
+              setEditId(null);
+              setTitle(null);
+              setPrice(0);
+              setHours(0);
+              setMinutes(0);
+              setImageSrc(null);
+              setImageUrl(null);
+              setChange(true);
+          }else{
+              toast('Server Error',{
+                  type:'error'
+              })
+          }
+      })
+      .catch((err)=>{
+          setError(true);
+          toast('Server Error',{
+              type:'error'
+          })
+      })
+  }
 
   return (
     <>
@@ -316,6 +402,137 @@ function Videos() {
         </ModalFooter>
       </Modal>
 
+      <Modal isOpen={isEditModalOpen} onClose={closeEditModal}>
+        <ModalHeader>Edit Video</ModalHeader>
+        { error ? <HelperText valid={false}>Unable to Submit Form Due To errors in the fields below</HelperText> : <div></div>  }
+        <ModalBody>
+
+        <Label>
+          <span>Thumbnail</span>
+          <br />
+        <div
+            className="flex items-center justify-center w-full mt-1"
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            >
+            {imageSrc ? (
+                <div className="h-40 w-full relative">
+                <button
+                    className="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1"
+                    onClick={handleDelete}
+                >
+                    <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-4 h-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    >
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M6 18L18 6M6 6l12 12"
+                    />
+                    </svg>
+                </button>
+                <img
+                    src={imageUrl}
+                    alt="Preview"
+                    className="w-full h-full object-contain rounded-lg"
+                />
+                </div>
+            ) : (
+                <label
+                htmlFor="dropzone-file"
+                className="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 "
+                >
+                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                    <svg
+                    className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 20 16"
+                    >
+                    <path
+                        stroke="currentColor"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                    />
+                    </svg>
+                    <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                    <span className="font-semibold">Click to upload</span> or drag and
+                    drop
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                    SVG, PNG, JPG or GIF (MAX. 800x400px)
+                    </p>
+                </div>
+                <input
+                    id="dropzone-file"
+                    type="file"
+                    className="hidden"
+                    onChange={(e) =>{ setImageSrc(e.target.files[0]); setImageUrl(URL.createObjectURL(e.target.files[0]) )}}
+                />
+                </label>
+            )}
+        </div>
+
+        </Label>
+
+        <br />
+
+        <Label>
+          <span>Title</span>
+          <Input className="mt-1" type="text" placeholder="New Podcast" value={title} onChange={e => setTitle(e.target.value)} required/>
+        </Label>
+
+        <Label className="mt-2">
+          <span>Duration</span>
+          <div className='flex gap-4'>
+              <div className='flex gap-4 items-center'>
+                <Input className="mt-1" type="number" min={0} max={24} value={hours} onChange={e => setHours(e.target.value)} required/>
+                <span>Hrs.</span>
+              </div>
+              <div className='flex gap-4 items-center'>
+                <Input className="mt-1" type="number" min={0} max={59} value={minutes} onChange={e => setMinutes(e.target.value)} required/>
+                <span>Mins.</span>
+              </div>
+          </div>
+        </Label>
+
+        <Label className="mt-4">
+          <span>Price</span>
+          <Input className="mt-1" type="number" placeholder="0" value={price} onChange={e => setPrice(e.target.value)} required/>
+        </Label>
+
+
+        </ModalBody>
+        <ModalFooter>
+          <div className="hidden sm:block">
+            <Button layout="outline" onClick={closeEditModal}>
+              Cancel
+            </Button>
+          </div>
+          <div className="hidden sm:block" onClick={handleEditSubmit}>
+            <Button>Submit</Button>
+          </div>
+          <div className="block w-full sm:hidden">
+            <Button block size="large" layout="outline" onClick={closeEditModal}>
+              Cancel
+            </Button>
+          </div>
+          <div className="block w-full sm:hidden">
+            <Button block size="large" onClick={handleEditSubmit}>
+              Submit
+            </Button>
+          </div>
+        </ModalFooter>
+      </Modal>
+
 
       <TableContainer className="mb-8">
         <Table>
@@ -325,6 +542,7 @@ function Videos() {
                 <TableCell>Title</TableCell>
                 <TableCell>Duration</TableCell>
                 <TableCell>Price</TableCell>
+                <TableCell>Edit</TableCell>
                 <TableCell>Delete</TableCell>
             </tr>
           </TableHeader>
@@ -357,6 +575,19 @@ function Videos() {
                 <TableCell>
                     <button onClick={e => {
                         e.preventDefault();
+                        setEditId(dt._id);
+                        setTitle(dt.title);
+                        setHours(dt.hours);
+                        setMinutes(dt.minutes);
+                        setPrice(dt.price);
+                        setImageUrl(`${process.env.REACT_APP_API_URL}/uploads/${dt.thumbnail}`);
+                        setImageSrc(dt.thumbnail);
+                        openEditModal();
+                    }} className='text-xs p-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white'>Edit</button>
+                </TableCell>
+                <TableCell>
+                    <button onClick={e => {
+                        e.preventDefault();
                         handleDeleteItem(dt._id);
                     }} className='text-xs p-2 rounded-lg bg-red-500 hover:bg-red-600 text-white'>Delete</button>
                 </TableCell>
@@ -373,6 +604,8 @@ function Videos() {
           />
         </TableFooter>
       </TableContainer>
+
+
 
     </>
   )
