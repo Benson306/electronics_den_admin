@@ -230,7 +230,7 @@ function Videos() {
       formData.append('price', price);
       formData.append('thumbnail', imageSrc)
 
-      fetch(`http://localhost:5000/edit_video/${editId}`,{
+      fetch(`${process.env.REACT_APP_API_URL}/edit_video/${editId}`,{
           method: 'PUT',
           body: formData
       })
