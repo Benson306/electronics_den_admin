@@ -8,7 +8,6 @@ import { Label, Input, Button } from '@windmill/react-ui'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AuthContext } from '../context/AuthContext'
-import { response } from 'express'
 
 function Login() {
 
