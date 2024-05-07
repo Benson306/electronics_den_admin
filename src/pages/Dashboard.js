@@ -60,7 +60,7 @@ function Dashboard() {
   useEffect(() => {
     
     
-    fetch(`http://localhost:5000/GetAllOrders`,{
+    fetch(`${process.env.REACT_APP_API_URL}/GetAllOrders`,{
       method: 'GET',
       headers: {
         'Authorization':`Bearer ${token}`
