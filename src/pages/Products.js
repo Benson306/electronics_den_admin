@@ -411,7 +411,7 @@ function Products() {
         </Label>
         <Label className="mt-2">
           <span>Product Name</span>
-          <Input className="mt-1" type="email" placeholder="JaneDoe@gmail.com" onChange={e => setProductName(e.target.value)} required/>
+          <Input className="mt-1" type="email" placeholder="Product name" onChange={e => setProductName(e.target.value)} required/>
         </Label>
 
         <Label className="mt-2">
@@ -604,7 +604,7 @@ function Products() {
         </Label>
         <Label className="mt-2">
           <span>Product Name</span>
-          <Input className="mt-1" type="email" placeholder="JaneDoe@gmail.com" value={productName} onChange={e => setProductName(e.target.value)} required/>
+          <Input className="mt-1" type="email" placeholder="Product name" value={productName} onChange={e => setProductName(e.target.value)} required/>
         </Label>
 
         <Label className="mt-2">
