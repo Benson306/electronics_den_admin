@@ -43,7 +43,7 @@ function Login() {
           toast('Success',{
               type:'success'
             })
-            login(email);
+            login(response);
             history.push('/app')
           });
           setLoading(false);

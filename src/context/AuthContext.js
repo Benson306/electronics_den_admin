@@ -3,24 +3,24 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 export const AuthContext = createContext();
 
 export function AuthProvider({ children }){
-    const [authUser, setAuthUser] = useState(null);
+    const [token, setToken] = useState(null);
 
 
     const login = (user) =>{
-        setAuthUser(user);
-        localStorage.setItem('user', user)
+        setToken(user);
+        localStorage.setItem('token', user)
     }
 
     const logout = (user)=>{
-        setAuthUser(null);
-        localStorage.removeItem('user')
+        setToken(null);
+        localStorage.removeItem('token')
     }
 
     const isLoggedIn = () =>{
-        let email = localStorage.getItem('user');
+        let savedToken = localStorage.getItem('token');
 
-        if(email){
-            setAuthUser(email);
+        if(savedToken){
+            setToken(savedToken);
         }
     }
 
@@ -28,5 +28,5 @@ export function AuthProvider({ children }){
         isLoggedIn();
     },[])
 
-    return (<AuthContext.Provider  value={{login, logout, authUser}}>{children}</AuthContext.Provider>)
+    return (<AuthContext.Provider  value={{login, logout, token}}>{children}</AuthContext.Provider>)
 }

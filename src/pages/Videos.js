@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 
 import PageTitle from '../components/Typography/PageTitle'
 import SectionTitle from '../components/Typography/SectionTitle'
@@ -24,6 +24,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import response from '../utils/demo/tableData'
+import { AuthContext } from '../context/AuthContext'
 // make a copy of the data, for the second table
 const response2 = response.concat([])
 
@@ -61,8 +62,14 @@ function Videos() {
 
   // }, [pageTable])
 
+  const { token } = useContext(AuthContext);
+
   useEffect(()=>{
-    fetch(`${process.env.REACT_APP_API_URL}/get_videos`)
+    fetch(`${process.env.REACT_APP_API_URL}/get_videos`,{
+      headers: {
+        'Authorization':`Bearer ${token}`
+      }
+    })
     .then( data => data.json())
     .then( data => {
         console.log(data)
@@ -135,6 +142,9 @@ function Videos() {
 
         fetch(`${process.env.REACT_APP_API_URL}/add_video`,{
             method: 'POST',
+            headers: {
+              'Authorization':`Bearer ${token}`
+            },
             body: formData
         })
         .then((response)=>{
@@ -166,7 +176,10 @@ function Videos() {
 
     const handleDeleteItem = ( id ) => {
         fetch(`${process.env.REACT_APP_API_URL}/del_video/${id}`,{
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+              'Authorization':`Bearer ${token}`
+            }
         })
         .then((response)=>{
             if(response.ok){
@@ -232,6 +245,9 @@ function Videos() {
 
       fetch(`${process.env.REACT_APP_API_URL}/edit_video/${editId}`,{
           method: 'PUT',
+          headers: {
+            'Authorization':`Bearer ${token}`
+          },
           body: formData
       })
       .then((response)=>{

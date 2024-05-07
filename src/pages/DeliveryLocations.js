@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import PageTitle from '../components/Typography/PageTitle'
 import {
     Table,
@@ -14,6 +14,7 @@ import {
   } from '@windmill/react-ui'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { AuthContext } from '../context/AuthContext';
 
 function DeliveryLocations() {
     const [data, setData] = useState([]);
@@ -24,8 +25,14 @@ function DeliveryLocations() {
     const [editId, setEditId] = useState(null);
     const [change, setChange] = useState(false);
 
+    const { token } = useContext(AuthContext);
+
     useEffect(()=>{
-        fetch(`${process.env.REACT_APP_API_URL}/get_locations`)
+        fetch(`${process.env.REACT_APP_API_URL}/get_locations`,{
+          headers: {
+            'Authorization':`Bearer ${token}`
+          }
+        })
         .then( response => {
             if(response.ok){
                 response.json().then(res => {
@@ -54,7 +61,8 @@ function DeliveryLocations() {
         fetch(`${process.env.REACT_APP_API_URL}/add_location`,{
             method:'POST',
             headers: {
-                'Content-Type':'application/json'
+                'Content-Type':'application/json',
+                'Authorization':`Bearer ${token}`
             },
             body: JSON.stringify({
                 town, price
@@ -79,7 +87,10 @@ function DeliveryLocations() {
 
     const handleDelete = (id) => {
         fetch(`${process.env.REACT_APP_API_URL}/del_location/${id}`,{
-            method:'DELETE'
+            method:'DELETE',
+            headers:{
+              'Authorization':`Bearer ${token}`
+            }
         })
         .then((res)=>{
             if(res.ok){
@@ -119,7 +130,8 @@ function DeliveryLocations() {
         fetch(`${process.env.REACT_APP_API_URL}/edit_location/${editId}`,{
             method:'PUT',
             headers: {
-                'Content-Type':'application/json'
+                'Content-Type':'application/json',
+                'Authorization':`Bearer ${token}`
             },
             body: JSON.stringify({
                 town, price

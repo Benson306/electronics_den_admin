@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 
 import InfoCard from '../components/Cards/InfoCard'
 import ChartCard from '../components/Chart/ChartCard'
@@ -28,6 +28,7 @@ import {
   lineLegends,
 } from '../utils/demo/chartsData'
 import SectionTitle from '../components/Typography/SectionTitle'
+import { AuthContext } from '../context/AuthContext'
 
 function Dashboard() {
   const [page, setPage] = useState(1)
@@ -52,12 +53,19 @@ function Dashboard() {
     setPage(p)
   }
 
+  const { token } = useContext(AuthContext);
+
   // on page change, load new sliced data
   // here you would make another server request for new data
   useEffect(() => {
     
     
-    fetch(`${process.env.REACT_APP_API_URL}/GetAllOrders`)
+    fetch(`http://localhost:5000/GetAllOrders`,{
+      method: 'GET',
+      headers: {
+        'Authorization':`Bearer ${token}`
+      }
+    })
     .then( data => data.json())
     .then( data => { 
         setAllOrders(data.length); 
@@ -69,12 +77,22 @@ function Dashboard() {
       } )
     .catch( err => { console.log(err); setLoading(false); })
 
-    fetch(`${process.env.REACT_APP_API_URL}/GetPendingOrders`)
+    fetch(`${process.env.REACT_APP_API_URL}/GetPendingOrders`,{
+      method: 'GET',
+      headers: {
+        'Authorization':`Bearer ${token}`
+      }
+    })
     .then( data => data.json())
     .then( data => { setPendingOrders(data.length) } )
     .catch( err => { console.log(err) })
 
-    fetch(`${process.env.REACT_APP_API_URL}/GetDeliveredOrders`)
+    fetch(`${process.env.REACT_APP_API_URL}/GetDeliveredOrders`,{
+      method: 'GET',
+      headers: {
+        'Authorization':`Bearer ${token}`
+      }
+    })
     .then( data => data.json())
     .then( data => { setDeliveredOrders(data.length); } )
     .catch( err => { console.log(err) })

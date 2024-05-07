@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 
 import PageTitle from '../components/Typography/PageTitle'
 import SectionTitle from '../components/Typography/SectionTitle'
@@ -22,6 +22,7 @@ import {
 import { EditIcon, TrashIcon } from '../icons'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { AuthContext } from '../context/AuthContext'
 
 
 function Modals() {
@@ -71,6 +72,8 @@ function Modals() {
 
   const [change, setChange] = useState(false);
 
+  const { token } = useContext(AuthContext);
+
   useEffect(()=>{
     if(password.length > 7){
       setPassLength(true)
@@ -104,7 +107,11 @@ function Modals() {
   },[confPassword])
 
   useEffect(()=>{
-    fetch(`${process.env.REACT_APP_API_URL}/users`)
+    fetch(`${process.env.REACT_APP_API_URL}/users`,{
+      headers: {
+        'Authorization':`Bearer ${token}`
+      }
+    })
     .then(result => result.json())
     .then(result =>{
         setData(result)
@@ -121,7 +128,8 @@ function Modals() {
       fetch(`${process.env.REACT_APP_API_URL}/add_user`,{
         method: 'POST',
         headers: {
-          'Content-Type':'application/json'
+          'Content-Type':'application/json',
+          'Authorization':`Bearer ${token}`
         },
         body: JSON.stringify({ email, password, master_password: master })
       })
@@ -155,7 +163,10 @@ function Modals() {
 
   function handleSubmitDelete(master, id){
     fetch(`${process.env.REACT_APP_API_URL}/delete/${master}/${id}`,{
-      method:'DELETE'
+      method:'DELETE',
+      headers: {
+        'Authorization':`Bearer ${token}`
+      }
     })
     .then( result => {
       if(result.ok){
@@ -189,7 +200,8 @@ function Modals() {
     fetch(`${process.env.REACT_APP_API_URL}/change_password`,{
       method:'POST',
       headers: {
-        'Content-Type':'application/json'
+        'Content-Type':'application/json',
+        'Authorization':`Bearer ${token}`
       },
       body: JSON.stringify({
         master_password: master,

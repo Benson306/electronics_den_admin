@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 
 import PageTitle from '../components/Typography/PageTitle'
 import SectionTitle from '../components/Typography/SectionTitle'
@@ -19,6 +19,7 @@ import { EditIcon, TrashIcon } from '../icons'
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { AuthContext } from '../context/AuthContext'
 
 function PendingOrders() {
   /**
@@ -53,17 +54,27 @@ function PendingOrders() {
 
   // }, [pageTable])
 
+  const { token } = useContext(AuthContext);
+
   useEffect(()=>{
-    fetch(`${process.env.REACT_APP_API_URL}/GetPendingOrders`)
+    fetch(`${process.env.REACT_APP_API_URL}/GetPendingOrders`,{
+      headers: {
+        'Authorization':`Bearer ${token}`
+      }
+    })
     .then( data => data.json())
     .then( data => { 
       //setDeliveredOrders(data); 
 
       Promise.all(
         data.map(order =>
-          fetch(`${process.env.REACT_APP_API_URL}/get_location/${order.deliveryLocation}`)
-            .then(response => response.json())
-            .then(location => ({ ...order, deliveryLocation: location.town  }))
+          fetch(`${process.env.REACT_APP_API_URL}/get_location/${order.deliveryLocation}`,{
+            headers: {
+              'Authorization':`Bearer ${token}`
+            }
+          })
+          .then(response => response.json())
+          .then(location => ({ ...order, deliveryLocation: location.town  }))
         )
       ).then(ordersWithData => {
         setTotalResults(ordersWithData.length);
@@ -76,7 +87,10 @@ function PendingOrders() {
 
   const handleUpdate = (id) =>{
     fetch(`${process.env.REACT_APP_API_URL}/update_delivery/${id}`,{
-      method: 'PUT'
+      method: 'PUT',
+      headers: {
+        'Authorization':`Bearer ${token}`
+      }
     })
     .then(response => response.json())
     .then( response => {

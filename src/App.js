@@ -9,7 +9,7 @@ const CreateAccount = lazy(() => import('./pages/CreateAccount'))
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'))
 function App() {
 
-  const { authUser } = useContext(AuthContext);
+  const { token } = useContext(AuthContext);
 
   return (
     <>
@@ -20,7 +20,7 @@ function App() {
           <Route path="/forgot-password" component={ForgotPassword} />
 
           {/* Place new routes over this */}
-          <Route path="/app" component={ authUser == null ? Login : Layout} />
+          <Route path="/app" component={ token == null ? Login : Layout} />
           {/* If you have an index page, you can remothis Redirect */}
           <Redirect exact from="/" to="/app/dashboard" />
         </Switch>

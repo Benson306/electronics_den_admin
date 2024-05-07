@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 
 import PageTitle from '../components/Typography/PageTitle'
 import SectionTitle from '../components/Typography/SectionTitle'
@@ -18,6 +18,7 @@ import {
 import { EditIcon, TrashIcon } from '../icons'
 
 import response from '../utils/demo/tableData'
+import { AuthContext } from '../context/AuthContext'
 // make a copy of the data, for the second table
 const response2 = response.concat([])
 
@@ -54,15 +55,27 @@ function Tables() {
 
   // }, [pageTable])
 
+  const { token } = useContext(AuthContext);
+
   useEffect(()=>{
-    fetch(`${process.env.REACT_APP_API_URL}/GetDeliveredOrders`)
+    fetch(`${process.env.REACT_APP_API_URL}/GetDeliveredOrders`,{
+      method: 'GET',
+      headers: {
+        'Authorization':`Bearer ${token}`
+      }
+    })
     .then( data => data.json())
     .then( data => { 
       //setDeliveredOrders(data);
 
       Promise.all(
         data.map(order =>
-          fetch(`${process.env.REACT_APP_API_URL}/get_location/${order.deliveryLocation}`)
+          fetch(`${process.env.REACT_APP_API_URL}/get_location/${order.deliveryLocation}`,{
+            method: 'GET',
+            headers: {
+              'Authorization':`Bearer ${token}`
+            }
+          })
             .then(response => response.json())
             .then(location => ({ ...order, deliveryLocation: location.town  }))
         )

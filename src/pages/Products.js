@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 
 import PageTitle from '../components/Typography/PageTitle'
 import SectionTitle from '../components/Typography/SectionTitle'
@@ -24,6 +24,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import response from '../utils/demo/tableData'
+import { AuthContext } from '../context/AuthContext'
 // make a copy of the data, for the second table
 const response2 = response.concat([])
 
@@ -61,6 +62,7 @@ function Products() {
   // }, [pageTable])
 
   const [change, setChange] = useState(false);
+  const { token } = useContext(AuthContext);
 
   useEffect(()=>{
     fetch(`${process.env.REACT_APP_API_URL}/get_products`)
@@ -144,6 +146,9 @@ function Products() {
 
         fetch(`${process.env.REACT_APP_API_URL}/add_product`,{
             method: 'POST',
+            headers: {
+              'Authorization':`Bearer ${token}`
+            },
             body: formData
         })
         .then((response)=>{
@@ -171,7 +176,10 @@ function Products() {
 
     const handleDeleteItem = ( id ) => {
         fetch(`${process.env.REACT_APP_API_URL}/del_product/${id}`,{
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+              'Authorization':`Bearer ${token}`
+            }
         })
         .then((response)=>{
             if(response.ok){
@@ -196,7 +204,8 @@ function Products() {
         fetch(`${process.env.REACT_APP_API_URL}/change_availability/${id}`,{
             method: 'POST',
             headers:{
-                'Content-Type':'application/json'
+                'Content-Type':'application/json',
+                'Authorization':`Bearer ${token}`
             },
             body: JSON.stringify({
                 value: value
@@ -273,6 +282,9 @@ function Products() {
 
       fetch(`${process.env.REACT_APP_API_URL}/edit_product/${editId}`,{
           method: 'PUT',
+          headers: {
+            'Authorization':`Bearer ${token}`
+          },
           body: formData
       })
       .then((response)=>{
