@@ -72,7 +72,6 @@ function Videos() {
     })
     .then( data => data.json())
     .then( data => {
-        console.log(data)
       //setDeliveredOrders(data); 
       setTotalResults(data.length);
       setData(data.reverse().slice((page - 1) * resultsPerPage, page * resultsPerPage))
@@ -163,7 +162,7 @@ function Videos() {
             }else{
                 toast('Server Error',{
                     type:'error'
-                })
+                });
             }
         })
         .catch((err)=>{
