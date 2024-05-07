@@ -89,6 +89,12 @@ function Videos() {
     }
 
     function closeModal() {
+      setTitle(null);
+      setPrice(0);
+      setHours(0);
+      setMinutes(0);
+      setImageSrc(null);
+      setImageUrl(null);
       setIsModalOpen(false)
     }
 
@@ -153,12 +159,6 @@ function Videos() {
                 toast('Success',{
                     type:'success'
                 });
-                setTitle(null);
-                setPrice(0);
-                setHours(0);
-                setMinutes(0);
-                setImageSrc(null);
-                setImageUrl(null);
                 setChange(true);
             }else{
                 toast('Server Error',{

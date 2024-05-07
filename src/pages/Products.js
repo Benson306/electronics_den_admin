@@ -60,6 +60,20 @@ function Products() {
     
 
   // }, [pageTable])
+  const [productName, setProductName] = useState(null);
+  const [type, setType] = useState(null);
+  const [price, setPrice] = useState(0);
+  const [xSmall, setXSmall] = useState(false);
+  const [small, setSmall] = useState(false);
+  const [medium, setMedium] = useState(false);
+  const [large, setLarge] = useState(false);
+  const [xlarge, setXLarge] = useState(false);
+  const [xxLarge, setxXLarge] = useState(false);
+  const [error, setError] = useState(false);
+
+  const [imageSrc, setImageSrc] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
+
 
   const [change, setChange] = useState(false);
   const { token } = useContext(AuthContext);
@@ -83,22 +97,19 @@ function Products() {
   }
 
   function closeModal() {
+    setProductName(null);
+      setType(null);
+      setPrice(0);
+      setXSmall(null);
+      setSmall(null);
+      setMedium(null);
+      setLarge(null);
+      setXLarge(null);
+      setxXLarge(null);;
+      setImageUrl(null);
+      setImageSrc(null);
     setIsModalOpen(false)
   }
-
-  const [productName, setProductName] = useState(null);
-  const [type, setType] = useState(null);
-  const [price, setPrice] = useState(0);
-  const [xSmall, setXSmall] = useState(false);
-  const [small, setSmall] = useState(false);
-  const [medium, setMedium] = useState(false);
-  const [large, setLarge] = useState(false);
-  const [xlarge, setXLarge] = useState(false);
-  const [xxLarge, setxXLarge] = useState(false);
-  const [error, setError] = useState(false);
-
-  const [imageSrc, setImageSrc] = useState(null);
-  const [imageUrl, setImageUrl] = useState(null);
 
   const handleDrop = (e) => {
     e.preventDefault();
