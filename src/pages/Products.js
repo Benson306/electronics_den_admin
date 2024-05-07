@@ -221,6 +221,83 @@ function Products() {
         })
     }
 
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [editId, setEditId] = useState(null);
+
+    function openEditModal() {
+      setIsEditModalOpen(true)
+    }
+
+    function closeEditModal(){
+      setProductName(null);
+      setType(null);
+      setPrice(0);
+      setXSmall(null);
+      setSmall(null);
+      setMedium(null);
+      setLarge(null);
+      setXLarge(null);
+      setxXLarge(null);;
+      setImageUrl(null);
+      setImageSrc(null);
+      setIsEditModalOpen(false);
+    }
+
+    const handleEdit = () =>{
+      if(productName == null || price < 1 || imageSrc == null || type == null){
+          toast('All fields must be filled',{
+              type:'error'
+          })
+          return
+      }
+          
+      if(!xSmall && !small && !medium && xlarge && xxLarge ){
+          toast('Check At least one size',{
+              type:'error'
+          })
+          return
+      }
+
+      const formData = new FormData();
+
+      formData.append('productName', productName);
+      formData.append('type', type);
+      formData.append('price', price);
+      formData.append('image', imageSrc)
+      formData.append('xSmall', xSmall);
+      formData.append('small', small);
+      formData.append('medium', medium)
+      formData.append('large', large)
+      formData.append('xLarge', xlarge)
+      formData.append('xXLarge', xxLarge)
+
+      fetch(`${process.env.REACT_APP_API_URL}/edit_product/${editId}`,{
+          method: 'PUT',
+          body: formData
+      })
+      .then((response)=>{
+          if(response.ok){
+              closeEditModal();
+              toast('Success',{
+                  type:'success'
+              })
+              setChange(true);
+          }else{
+            response.json().then( err => {
+              console.log(err)
+              })
+              toast('Server Error',{
+                  type:'error'
+              })
+          }
+      })
+      .catch((err)=>{
+          toast('Server Error',{
+              type:'error'
+          })
+      })
+    }
+
 
   return (
     <>
@@ -423,7 +500,199 @@ function Products() {
           </div>
         </ModalFooter>
       </Modal>
+      
+      <Modal isOpen={isEditModalOpen} onClose={closeEditModal}>
+        <ModalHeader>Edit Product</ModalHeader>
+        { error ? <HelperText valid={false}>Unable to Submit Form Due To errors in the fields below</HelperText> : <div></div>  }
+        <ModalBody>
 
+        <Label className="mt-2">
+          <span>Product Image</span>
+          <br />
+        <div
+            className="flex items-center justify-center w-full mt-1"
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            >
+            {imageSrc ? (
+                <div className="h-40 w-full relative flex">
+                <button
+                    className="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1"
+                    onClick={handleDelete}
+                >
+                    <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-4 h-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    >
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M6 18L18 6M6 6l12 12"
+                    />
+                    </svg>
+                </button>
+                <img
+                    src={imageUrl}
+                    alt="Preview"
+                    className="w-full h-full object-contain rounded-lg"
+                />
+                </div>
+            ) : (
+                <label
+                htmlFor="dropzone-file"
+                className="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 "
+                >
+                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                    <svg
+                    className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 20 16"
+                    >
+                    <path
+                        stroke="currentColor"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                    />
+                    </svg>
+                    <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                    <span className="font-semibold">Click to upload</span> or drag and
+                    drop
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                    SVG, PNG, JPG or GIF (MAX. 800x400px)
+                    </p>
+                </div>
+                <input
+                    id="dropzone-file"
+                    type="file"
+                    className="hidden"
+                    onChange={(e) =>{ setImageSrc(e.target.files[0]); setImageUrl(URL.createObjectURL(e.target.files[0]) )}}
+                />
+                </label>
+            )}
+        </div>
+
+        </Label>
+
+        <Label className="mt-4">
+          <span>Product Type</span>
+          <Select className="mt-1" onChange={e => setType(e.target.value)}>
+            <option className='capitalize' value={type}>{type}</option>
+            <option value="tshirt">Tshirt</option>
+            <option value="hoodie">Hoodie</option>
+          </Select>
+        </Label>
+        <Label className="mt-2">
+          <span>Product Name</span>
+          <Input className="mt-1" type="email" placeholder="JaneDoe@gmail.com" value={productName} onChange={e => setProductName(e.target.value)} required/>
+        </Label>
+
+        <Label className="mt-2">
+          <span>Price</span>
+          <Input className="mt-1" type="number" placeholder="0" value={price} onChange={e => setPrice(e.target.value)} required/>
+        </Label>
+
+        <Label className="mt-2">
+          <span>Available Sizes:</span>
+          <br />
+          <div className="flex gap-4">
+          <div className='flex items-center'>
+            <Input type="checkbox" 
+            className="border border-black"
+            checked={xSmall}
+            onChange={(e)=> setXSmall(e.target.checked)}
+             />
+            <span className="ml-1">
+                XS
+            </span>
+          </div>
+
+          <div className='flex items-center'>
+            <Input type="checkbox" 
+            className="border border-black"
+            checked={small}
+            onChange={(e)=> setSmall(e.target.checked)}
+             />
+            <span className="ml-1">
+                SM
+            </span>
+          </div>
+
+          <div className='flex items-center'>
+            <Input type="checkbox" 
+            className="border border-black"
+            checked={medium}
+            onChange={(e)=> setMedium(e.target.checked)}
+             />
+            <span className="ml-1">
+                M
+            </span>
+          </div>
+
+          <div className='flex items-center'>
+            <Input type="checkbox" 
+            className="border border-black" 
+            checked={large}
+            onChange={(e)=> setLarge(e.target.checked)}
+            />
+            <span className="ml-1">
+                L
+            </span>
+          </div>
+
+          <div className='flex items-center'>
+            <Input type="checkbox" 
+            className="border border-black"
+            checked={xlarge}
+            onChange={(e)=> setXLarge(e.target.checked)} />
+            <span className="ml-1">
+                XL
+            </span>
+          </div>
+
+          <div className='flex items-center'>
+            <Input type="checkbox" 
+            className="border border-black"
+            checked={xxLarge}
+            onChange={(e)=> setxXLarge(e.target.checked)}
+            />
+            <span className="ml-1">
+                2XL
+            </span>
+          </div>
+          </div>
+        </Label>
+
+        </ModalBody>
+        <ModalFooter>
+          <div className="hidden sm:block">
+            <Button layout="outline" onClick={closeEditModal}>
+              Cancel
+            </Button>
+          </div>
+          <div className="hidden sm:block" onClick={handleEdit}>
+            <Button>Submit</Button>
+          </div>
+          <div className="block w-full sm:hidden">
+            <Button block size="large" layout="outline" onClick={closeEditModal}>
+              Cancel
+            </Button>
+          </div>
+          <div className="block w-full sm:hidden">
+            <Button block size="large" onClick={handleSubmit}>
+              Submit
+            </Button>
+          </div>
+        </ModalFooter>
+      </Modal>
 
       <TableContainer className="mb-8">
         <Table>
@@ -492,7 +761,26 @@ function Products() {
                 </div>
                 </TableCell>
                 <TableCell>
-                    <button className='text-xs p-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white'>Edit</button>
+                    <button 
+                    onClick={ e=> {
+                      e.preventDefault();
+                      setEditId(dt._id);
+                      setProductName(dt.productName);
+                      setType(dt.type);
+                      setPrice(dt.price);
+                      setXSmall(dt.xSmall);
+                      setSmall(dt.small);
+                      setMedium(dt.medium);
+                      setLarge(dt.large);
+                      setXLarge(dt.xLarge);
+                      setxXLarge(dt.xXLarge);;
+                      setImageUrl(`${process.env.REACT_APP_API_URL}/uploads/${dt.image}`);
+                      setImageSrc(dt.image);
+                      openEditModal();
+                    }} 
+                    className='text-xs p-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white'>
+                      Edit
+                    </button>
                 </TableCell>
                 <TableCell>
                     <button onClick={e => {
@@ -513,6 +801,8 @@ function Products() {
           />
         </TableFooter>
       </TableContainer>
+
+
 
     </>
   )
