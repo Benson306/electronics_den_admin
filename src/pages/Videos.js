@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useContext, useRef } from 'react'
 
 import PageTitle from '../components/Typography/PageTitle'
 import SectionTitle from '../components/Typography/SectionTitle'
@@ -15,7 +15,6 @@ import {
   Button,
   Pagination,
 } from '@windmill/react-ui'
-
 import { Modal, ModalHeader, ModalBody, ModalFooter } from '@windmill/react-ui'
 import { Input, HelperText, Label, Select, Textarea } from '@windmill/react-ui'
 
@@ -275,7 +274,38 @@ function Videos() {
               type:'error'
           })
       })
-  }
+    }
+
+    const [uploadUrl, setUploadUrl] = useState(null);
+
+    useEffect(()=>{
+        fetch('http://localhost:8080/get_upload_url',{
+          mode: 'cors'
+        })
+        .then(data => data.json())
+        .then((result) => {
+          setUploadUrl(result.upload_url);
+        })
+    },[])
+
+    const muxUploaderRef = useRef(null);
+
+  useEffect(() => {
+    const muxUploader = muxUploaderRef.current;
+
+    if (muxUploader) {
+      const handleSuccess = () => {
+        console.log('success');
+      };
+
+      muxUploader.addEventListener('success', handleSuccess);
+
+      // Cleanup event listener on component unmount
+      return () => {
+        muxUploader.removeEventListener('success', handleSuccess);
+      };
+    }
+  }, []);
 
   return (
     <>
@@ -369,6 +399,14 @@ function Videos() {
 
         <br />
 
+        <Label>
+          <span className='mb-4'>Upload Video</span>
+          <br/>
+          <mux-uploader endpoint={uploadUrl}></mux-uploader>
+        </Label>
+
+        <div className='mt-3'></div>
+        
         <Label>
           <span>Title</span>
           <Input className="mt-1" type="text" placeholder="New Podcast" onChange={e => setTitle(e.target.value)} required/>
