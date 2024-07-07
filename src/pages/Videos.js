@@ -279,8 +279,10 @@ function Videos() {
     const [uploadUrl, setUploadUrl] = useState(null);
 
     useEffect(()=>{
-        fetch('http://localhost:8080/get_upload_url',{
-          mode: 'cors'
+        fetch(`${process.env.REACT_APP_API_URL}/get_upload_url`,{
+          headers: {
+            'Authorization':`Bearer ${token}`
+          }
         })
         .then(data => data.json())
         .then((result) => {
