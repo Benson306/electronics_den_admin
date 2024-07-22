@@ -147,7 +147,7 @@ function PendingOrders() {
                     <div className="flex items-center text-xs">
                         <div>
                         {
-                            dt.items.map( item => <p className="text-xs text-gray-600 dark:text-gray-400">{item.productName} X {item.quantity}</p>)
+                            dt.items.map( item => <p className="text-xs text-gray-600 dark:text-gray-400 capitalize">{item.type} - <b>{item.productName || item.title}</b> X {item.quantity}</p>)
                         }
                         
                         </div>
