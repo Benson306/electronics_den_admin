@@ -281,9 +281,7 @@ function Videos() {
     useEffect(()=>{
         fetch(`${process.env.REACT_APP_API_URL}/get_upload_url`,{
           headers: {
-            'Authorization':`Bearer ${token}`,
-            'X-ClientID': process.env.REACT_APP_CLIENT_ID,
-            'X-ClientID': process.env.REACT_APP_CLIENT_SECRET,
+            'Authorization':`Bearer ${token}`
           }
         })
         .then(data => data.json())
