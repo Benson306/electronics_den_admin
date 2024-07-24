@@ -72,8 +72,8 @@ function Videos() {
     .then( data => data.json())
     .then( data => {
       //setDeliveredOrders(data); 
-      setTotalResults(data.length);
-      setData(data.reverse().slice((page - 1) * resultsPerPage, page * resultsPerPage))
+      //setTotalResults(data.length);
+      setData(data)
       setLoading(false);
     })
     .catch( err => { console.log(err) })
@@ -651,12 +651,6 @@ function Videos() {
           </TableBody>
         </Table>
         <TableFooter>
-          <Pagination
-            totalResults={totalResults}
-            resultsPerPage={resultsPerPage}
-            onChange={onPageChangeTable}
-            label="Table navigation"
-          />
         </TableFooter>
       </TableContainer>
 
