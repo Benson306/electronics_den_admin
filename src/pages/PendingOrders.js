@@ -77,8 +77,8 @@ function PendingOrders() {
           .then(location => ({ ...order, deliveryLocation: location.town  }))
         )
       ).then(ordersWithData => {
-        setTotalResults(ordersWithData.length);
-        setData(ordersWithData.reverse().slice((page - 1) * resultsPerPage, page * resultsPerPage))
+        //setTotalResults(ordersWithData.length);
+        setData(ordersWithData)
         setLoading(false);
       });
     })
@@ -176,12 +176,7 @@ function PendingOrders() {
           </TableBody>
         </Table>
         <TableFooter>
-          <Pagination
-            totalResults={totalResults}
-            resultsPerPage={resultsPerPage}
-            onChange={onPageChangeTable}
-            label="Table navigation"
-          />
+          
         </TableFooter>
       </TableContainer>
 

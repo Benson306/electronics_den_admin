@@ -80,8 +80,8 @@ function Tables() {
             .then(location => ({ ...order, deliveryLocation: location.town  }))
         )
       ).then(ordersWithData => {
-        setTotalResults(ordersWithData.length);
-        setData(ordersWithData.reverse().slice((page - 1) * resultsPerPage, page * resultsPerPage))
+        // setTotalResults(ordersWithData.length);
+        setData(ordersWithData)
         setLoading(false);
       });
     })
@@ -129,7 +129,7 @@ function Tables() {
                     <div className="flex items-center text-sm">
                         <div>
                         {
-                            dt.items.map( item => <p className="text-xs text-gray-600 dark:text-gray-400">{item.productName} X {item.quantity}</p>)
+                            dt.items.map( item => <p className="text-xs text-gray-600 dark:text-gray-400">{item.productName || item.title } X {item.quantity}</p>)
                         }
                         
                         </div>
@@ -158,12 +158,6 @@ function Tables() {
           </TableBody>
         </Table>
         <TableFooter>
-          <Pagination
-            totalResults={totalResults}
-            resultsPerPage={resultsPerPage}
-            onChange={onPageChangeTable}
-            label="Table navigation"
-          />
         </TableFooter>
       </TableContainer>
 
