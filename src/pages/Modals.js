@@ -72,7 +72,7 @@ function Modals() {
 
   const [change, setChange] = useState(false);
 
-  const { token } = useContext(AuthContext);
+  const { token, logout } = useContext(AuthContext);
 
   useEffect(()=>{
     if(password.length > 7){
@@ -112,12 +112,22 @@ function Modals() {
         'Authorization':`Bearer ${token}`
       }
     })
-    .then(result => result.json())
     .then(result =>{
-        setData(result)
-        setLoading(false)
+      if(result.ok){
+        result.json().then(response =>{
+          setData(response)
+          setLoading(false);
+        })
+      }else{
+        result.json().then(response => {
+          logout();
+        })
+      }
+        
     })
     .catch(err => {
+      setError(true);
+      setLoading(false);
       console.log(err)
     })
   },[change])
@@ -373,9 +383,12 @@ function Modals() {
               loading && <TableRow><TableCell><div>Loading....</div></TableCell></TableRow>
             }
             {
-              !loading && data.length === 0 && <TableRow><TableCell><div>No records to show</div></TableCell></TableRow>
+              !loading && error && <TableRow><TableCell><div>Your token has expired, Logout and login</div></TableCell></TableRow>
             }
-            {!loading && data.map((user, i) => (
+            {
+              !loading && !error && data.length === 0 && <TableRow><TableCell><div>No records to show</div></TableCell></TableRow>
+            }
+            {!loading && !error && data.map((user, i) => (
               <TableRow key={i}>
                 <TableCell>
                   <div className="flex items-center text-sm">

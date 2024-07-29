@@ -20,6 +20,7 @@ import { EditIcon, TrashIcon } from '../icons'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AuthContext } from '../context/AuthContext'
+import useAuthCheck from '../utils/useAuthCheck'
 
 function PendingOrders() {
   /**
@@ -55,6 +56,7 @@ function PendingOrders() {
   // }, [pageTable])
 
   const { token } = useContext(AuthContext);
+  useAuthCheck();
 
   useEffect(()=>{
     fetch(`${process.env.REACT_APP_API_URL}/GetPendingOrders`,{

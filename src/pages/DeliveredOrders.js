@@ -19,6 +19,7 @@ import { EditIcon, TrashIcon } from '../icons'
 
 import response from '../utils/demo/tableData'
 import { AuthContext } from '../context/AuthContext'
+import useAuthCheck from '../utils/useAuthCheck'
 // make a copy of the data, for the second table
 const response2 = response.concat([])
 
@@ -35,6 +36,8 @@ function Tables() {
   const [pageTable, setPageTable] = useState(1)
   const [page, setPage] = useState(1)
   const [data, setData] = useState([])
+
+  useAuthCheck();
 
   // setup data for every table
   const [loading, setLoading] = useState(true)

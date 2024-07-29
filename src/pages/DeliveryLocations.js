@@ -15,6 +15,7 @@ import {
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AuthContext } from '../context/AuthContext';
+import useAuthCheck from '../utils/useAuthCheck';
 
 function DeliveryLocations() {
     const [data, setData] = useState([]);
@@ -26,6 +27,8 @@ function DeliveryLocations() {
     const [change, setChange] = useState(false);
 
     const { token } = useContext(AuthContext);
+
+    useAuthCheck();
 
     useEffect(()=>{
         fetch(`${process.env.REACT_APP_API_URL}/get_locations`,{

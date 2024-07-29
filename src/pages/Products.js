@@ -25,6 +25,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import response from '../utils/demo/tableData'
 import { AuthContext } from '../context/AuthContext'
+import useAuthCheck from '../utils/useAuthCheck'
 // make a copy of the data, for the second table
 const response2 = response.concat([])
 
@@ -77,6 +78,7 @@ function Products() {
 
   const [change, setChange] = useState(false);
   const { token } = useContext(AuthContext);
+  useAuthCheck();
 
   useEffect(()=>{
     fetch(`${process.env.REACT_APP_API_URL}/get_products`)

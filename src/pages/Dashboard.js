@@ -29,6 +29,7 @@ import {
 } from '../utils/demo/chartsData'
 import SectionTitle from '../components/Typography/SectionTitle'
 import { AuthContext } from '../context/AuthContext'
+import useAuthCheck from '../utils/useAuthCheck'
 
 function Dashboard() {
   const [page, setPage] = useState(1)
@@ -54,6 +55,8 @@ function Dashboard() {
   }
 
   const { token } = useContext(AuthContext);
+
+  useAuthCheck();
 
   // on page change, load new sliced data
   // here you would make another server request for new data
