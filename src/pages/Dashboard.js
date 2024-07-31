@@ -154,6 +154,7 @@ function Dashboard() {
               <TableCell>Items</TableCell>
               <TableCell>Delivery Location</TableCell>
               <TableCell>Order Cost</TableCell>
+              <TableCell>Amount Paid</TableCell>
               <TableCell>Delivery Status</TableCell>
               <TableCell>Order Date</TableCell>
               <TableCell>Delivery Date</TableCell>
@@ -196,6 +197,17 @@ function Dashboard() {
                 </TableCell>
                 <TableCell>
                   <span className="text-sm">ksh. {order.total_price + order.delivery_cost}</span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-sm">
+                    Ksh. 
+                    { 
+                      order.amount_paid ? 
+                      <span>{order.amount_paid}</span>
+                      :
+                      <span>{Math.floor(order.total_price) +  order.delivery_cost}</span> 
+                    }
+                  </span>
                 </TableCell>
                 <TableCell>
                   {

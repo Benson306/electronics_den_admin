@@ -123,6 +123,7 @@ function PendingOrders() {
               <TableCell>Delivery Cost</TableCell>
               <TableCell>Items Cost</TableCell>
               <TableCell>Total Cost</TableCell>
+              <TableCell>Amount Paid</TableCell>
               <TableCell>Order Date</TableCell>
               <TableCell>Actions</TableCell>
             </tr>
@@ -166,6 +167,17 @@ function PendingOrders() {
                 </TableCell>
                 <TableCell>
                   <span className="text-xs">Ksh. {Math.floor(dt.total_price) +  dt.delivery_cost}</span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-sm">
+                    Ksh.
+                    { 
+                      dt.amount_paid ? 
+                      <span>{dt.amount_paid}</span>
+                      :
+                      <span>{Math.floor(dt.total_price) +  dt.delivery_cost}</span> 
+                    }
+                  </span>
                 </TableCell>
                 <TableCell>
                   <span className="text-xs">{ dt.order_date }</span>
