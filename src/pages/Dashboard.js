@@ -108,7 +108,7 @@ function Dashboard() {
 
       {/* <!-- Cards --> */}
       <div className="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4">
-        <InfoCard title="Total Sales" value={`Ksh. ${total}`}>
+        <InfoCard title="Total Sales" value={`Ksh. ${total.toLocaleString()}`}>
           <RoundIcon
             icon={RevenueIcon}
             iconColorClass="text-orange-500 dark:text-orange-100"
@@ -152,9 +152,7 @@ function Dashboard() {
             <tr>
               <TableCell>Client Details</TableCell>
               <TableCell>Items</TableCell>
-              <TableCell>Delivery Location</TableCell>
               <TableCell>Order Cost</TableCell>
-              <TableCell>Amount Paid</TableCell>
               <TableCell>Delivery Status</TableCell>
               <TableCell>Order Date</TableCell>
               <TableCell>Delivery Date</TableCell>
@@ -187,27 +185,13 @@ function Dashboard() {
                     <div className="flex items-center text-sm">
                         <div>
                         {
-                            order.items.map( item => <p className="text-xs text-gray-600 dark:text-gray-400 capitalize">{item.type} - <b>{item.productName || item.title}</b> X {item.quantity}</p>)
+                            order.items.map( item => <p className="text-xs text-gray-600 dark:text-gray-400 capitalize"><b>{item.productName || item.title}</b> X {item.quantity}</p>)
                         }
                         </div>
                     </div>
                 </TableCell>
                 <TableCell>
-                  <span className="text-sm">{order.deliveryLocation}</span>
-                </TableCell>
-                <TableCell>
-                  <span className="text-sm">ksh. {order.total_price + order.delivery_cost}</span>
-                </TableCell>
-                <TableCell>
-                  <span className="text-sm">
-                    Ksh. 
-                    { 
-                      order.amount_paid ? 
-                      <span>{order.amount_paid}</span>
-                      :
-                      <span>{Math.floor(order.total_price) +  order.delivery_cost}</span> 
-                    }
-                  </span>
+                  <span className="text-sm">ksh. {(order.total_price + order.delivery_cost).toLocaleString()}</span>
                 </TableCell>
                 <TableCell>
                   {

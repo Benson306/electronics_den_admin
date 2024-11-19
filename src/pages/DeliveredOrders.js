@@ -101,11 +101,10 @@ function Tables() {
             <tr>
               <TableCell>Client Details</TableCell>
               <TableCell>Items</TableCell>
+              <TableCell>Items Cost</TableCell>
               <TableCell>Delivery Location</TableCell>
               <TableCell>Delivery Cost</TableCell>
-              <TableCell>Items Cost</TableCell>
               <TableCell>Total Cost</TableCell>
-              <TableCell>Amount Paid</TableCell>
               <TableCell>Order Date</TableCell>
               <TableCell>Delivery Date</TableCell>
             </tr>
@@ -133,34 +132,23 @@ function Tables() {
                     <div className="flex items-center text-sm">
                         <div>
                         {
-                          dt.items.map( item => <p className="text-xs text-gray-600 dark:text-gray-400 capitalize">{item.type} - <b>{item.productName || item.title}</b> X {item.quantity}</p>)
+                          dt.items.map( item => <p className="text-xs text-gray-600 dark:text-gray-400 capitalize"><b>{item.productName || item.title}</b> X {item.quantity} <span className='lowercase'>unit(s)</span></p>)
                         }
                         
                         </div>
                     </div>
                 </TableCell>
                 <TableCell>
+                  <span className="text-sm">Ksh. {Math.floor(dt.total_price).toLocaleString() }</span>
+                </TableCell>
+                <TableCell>
                   <span className="text-sm">{dt.deliveryLocation}</span>
                 </TableCell>
                 <TableCell>
-                  <span className="text-sm">Ksh. { dt.delivery_cost }</span>
+                  <span className="text-sm">Ksh. { dt.delivery_cost.toLocaleString() }</span>
                 </TableCell>
                 <TableCell>
-                  <span className="text-sm">Ksh. {Math.floor(dt.total_price) }</span>
-                </TableCell>
-                <TableCell>
-                  <span className="text-sm">Ksh. {Math.floor(dt.total_price) +  dt.delivery_cost}</span>
-                </TableCell>
-                <TableCell>
-                  <span className="text-sm">
-                    Ksh.
-                    { 
-                      dt.amount_paid ? 
-                      <span>{dt.amount_paid}</span>
-                      :
-                      <span>{Math.floor(dt.total_price) +  dt.delivery_cost}</span> 
-                    }
-                  </span>
+                  <span className="text-sm">Ksh. {(Math.floor(dt.total_price) +  dt.delivery_cost).toLocaleString()}</span>
                 </TableCell>
                 <TableCell>
                   <span className="text-sm">{ dt.order_date }</span>
