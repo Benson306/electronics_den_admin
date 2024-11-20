@@ -13,7 +13,7 @@ const routes = [
   },
   {
     path: '/app/categories',
-    icon: 'FormsIcon',
+    icon: 'CategoryIcon',
     name: 'Manage Categories',
   },
   {
