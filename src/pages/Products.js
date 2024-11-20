@@ -65,6 +65,7 @@ function Products() {
   const [description, setDescription] = useState(null);;
   const [price, setPrice] = useState(0);
   const [error, setError] = useState(false);
+  const [type, setType] = useState([]);
 
   const [imageSrc, setImageSrc] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
@@ -95,9 +96,10 @@ function Products() {
   function closeModal() {
     setProductName(null);
     setDescription(null);
-      setPrice(0);
-      setImageUrl(null);
-      setImageSrc(null);
+    setType([]);
+    setPrice(0);
+    setImageUrl(null);
+    setImageSrc(null);
     setIsModalOpen(false)
   }
 
@@ -118,7 +120,7 @@ function Products() {
 
   const handleSubmit = () => {
 
-        if(productName == null || price < 1 || imageSrc == null || description == null){
+        if(productName == null || price < 1 || imageSrc == null || description == null || !type){
             toast('All fields must be filled',{
                 type:'error'
             })
@@ -130,7 +132,9 @@ function Products() {
         formData.append('productName', productName);
         formData.append('price', price);
         formData.append('image', imageSrc);
-        formData.append('description', description)
+        formData.append('description', description);
+
+        type.forEach((item) => formData.append('type', item));
 
         fetch(`${process.env.REACT_APP_API_URL}/add_product`,{
             method: 'POST',
@@ -227,6 +231,7 @@ function Products() {
 
     function closeEditModal(){
       setProductName(null);
+      setType([]);
       setDescription(null);
       setPrice(0);
       setImageUrl(null);
@@ -235,7 +240,7 @@ function Products() {
     }
 
     const handleEdit = () =>{
-      if(productName == null || price < 1 || imageSrc == null || description == null){
+      if(productName == null || price < 1 || imageSrc == null || description == null || type == null){
           toast('All fields must be filled',{
               type:'error'
           })
@@ -247,6 +252,8 @@ function Products() {
       formData.append('price', price);
       formData.append('image', imageSrc);
       formData.append('description', description);
+
+      type.forEach((item) => formData.append('type', item));
 
       fetch(`${process.env.REACT_APP_API_URL}/edit_product/${editId}`,{
           method: 'PUT',
@@ -277,6 +284,21 @@ function Products() {
           })
       })
     }
+
+  const [categories, setCategories] = useState([]);
+
+  useEffect(()=>{
+    fetch(`${process.env.REACT_APP_API_URL}/get_categories`,{
+      headers: {
+        'Authorization':`Bearer ${token}`
+      }
+    })
+    .then( data => data.json())
+    .then( data => {
+      setCategories(data)
+    } )
+    .catch( err => { console.log(err) })
+  },[])
 
 
   return (
@@ -380,6 +402,39 @@ function Products() {
         <Label className="mt-2">
           <span>Product Name</span>
           <Input className="mt-1" type="email" placeholder="Product name" onChange={e => setProductName(e.target.value)} required/>
+        </Label>
+
+        <Label className="mt-4">
+          <span>Category</span>
+          <Select 
+            className="mt-1" 
+            onChange={(e) => {
+              const selectedCategory = e.target.value;
+              setType((prevType) => 
+                prevType.includes(selectedCategory) ? prevType : [...prevType, selectedCategory]
+              );
+            }}
+          >
+            <option value={null}></option>
+            {categories.length > 0 && categories.map(category => (
+              <option key={category._id} value={category.category}>
+                {category.category}
+              </option>
+            ))}
+          </Select>
+
+          <div className='flex gap-1 my-2'>
+            {type.map((tp, index) => (
+              <div key={index} className='bg-gray-200 flex gap-1 px-2 py-1 text-xs'>
+                <span>{tp}</span>
+                <button 
+                  onClick={() => setType((prevType) => prevType.filter(item => item !== tp))}
+                >
+                  X
+                </button>
+              </div>
+            ))}
+          </div>
         </Label>
 
         <Label className="mt-2">
@@ -504,6 +559,40 @@ function Products() {
             <option value="hoodie">Hoodie</option>
           </Select>
         </Label> */}
+
+<Label className="mt-4">
+          <span>Category</span>
+          <Select 
+            className="mt-1" 
+            onChange={(e) => {
+              const selectedCategory = e.target.value;
+              setType((prevType) => 
+                prevType.includes(selectedCategory) ? prevType : [...prevType, selectedCategory]
+              );
+            }}
+          >
+            <option value={null}></option>
+            {categories.length > 0 && categories.map(category => (
+              <option key={category._id} value={category.category}>
+                {category.category}
+              </option>
+            ))}
+          </Select>
+
+          <div className='flex gap-1 my-2'>
+            {type.map((tp, index) => (
+              <div key={index} className='bg-gray-200 flex gap-1 px-2 py-1 text-xs'>
+                <span>{tp}</span>
+                <button 
+                  onClick={() => setType((prevType) => prevType.filter(item => item !== tp))}
+                >
+                  X
+                </button>
+              </div>
+            ))}
+          </div>
+        </Label>
+
         <Label className="mt-2">
           <span>Product Name</span>
           <Input className="mt-1" type="email" placeholder="Product name" value={productName} onChange={e => setProductName(e.target.value)} required/>
@@ -546,8 +635,8 @@ function Products() {
         <Table>
           <TableHeader>
             <tr>
-                <TableCell>Image</TableCell>
-              <TableCell>Product Name</TableCell>
+              <TableCell>Image</TableCell>
+              <TableCell>Name & Category</TableCell>
               <TableCell>Product Description</TableCell>
               <TableCell>Price</TableCell>
               <TableCell className="text-center">In Stock?</TableCell>
@@ -568,7 +657,11 @@ function Products() {
                     <img src={`${process.env.REACT_APP_API_URL}/uploads/${dt.image}`} class="p-0 rounded-t-lg h-40 w-40 object-contain"  alt="No image Uploaded"  />
                 </TableCell>
                 <TableCell>
-                    <span className="text-sm">{dt.productName}</span>
+                    <span className="text-sm break-words whitespace-normal w-20">{dt.productName}</span>
+                    <br />
+                    <span className="text-xs capitalize flex gap-1 my-1">
+                      {dt.type.map( tp => <div className='bg-gray-200 px-2 py-1 rounded-lg'>{tp}</div>)}
+                    </span>
                 </TableCell>
                 <TableCell>
                     <span className="text-xs whitespace-pre-wrap">{dt.description}</span>
@@ -590,6 +683,7 @@ function Products() {
                     onClick={ e=> {
                       e.preventDefault();
                       setEditId(dt._id);
+                      setType(dt.type);
                       setProductName(dt.productName);
                       setDescription(dt.description);
                       setPrice(dt.price);

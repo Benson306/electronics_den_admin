@@ -12,6 +12,11 @@ const routes = [
     name: 'Dashboard', // name that appear in Sidebar
   },
   {
+    path: '/app/categories',
+    icon: 'FormsIcon',
+    name: 'Manage Categories',
+  },
+  {
     path: '/app/products',
     icon: 'FormsIcon',
     name: 'Products',
