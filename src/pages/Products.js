@@ -26,6 +26,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import response from '../utils/demo/tableData'
 import { AuthContext } from '../context/AuthContext'
 import useAuthCheck from '../utils/useAuthCheck'
+import ReadMoreText from '../components/ReadMoreText'
 // make a copy of the data, for the second table
 const response2 = response.concat([])
 
@@ -664,7 +665,8 @@ function Products() {
                     </span>
                 </TableCell>
                 <TableCell>
-                    <span className="text-xs whitespace-pre-wrap">{dt.description}</span>
+                  <ReadMoreText description={dt.description} />
+                    {/* <span className="text-xs whitespace-pre-wrap">{dt.description}</span> */}
                 </TableCell>
                 <TableCell>
                   <span className="text-sm">Ksh. {dt.price.toLocaleString()}</span>
