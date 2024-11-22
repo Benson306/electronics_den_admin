@@ -6,7 +6,6 @@ const ReadMoreText = ({ description }) => {
   const textRef = useRef(null);
 
   useEffect(() => {
-    debugger;
     if (description && textRef.current) {
       const lineHeight = parseFloat(getComputedStyle(textRef.current).lineHeight);
       const maxLines = 6;
