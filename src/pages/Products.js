@@ -255,8 +255,8 @@ function Products() {
       setType([]);
       setDescription(null);
       setPrice(0);
-      setImageUrl(null);
-      setImageSrc(null);
+      setImageUrl([]);
+      setImageSrc([]);
       setIsEditModalOpen(false);
     }
 
