@@ -27,6 +27,7 @@ import response from '../utils/demo/tableData'
 import { AuthContext } from '../context/AuthContext'
 import useAuthCheck from '../utils/useAuthCheck'
 import ReadMoreText from '../components/ReadMoreText'
+import { Link } from 'react-router-dom/cjs/react-router-dom.min'
 // make a copy of the data, for the second table
 const response2 = response.concat([])
 
@@ -67,6 +68,7 @@ function Products() {
   const [price, setPrice] = useState(0);
   const [error, setError] = useState(false);
   const [type, setType] = useState([]);
+  const [links, setLinks] = useState(['']);
 
   const [imageSrc, setImageSrc] = useState([]);
   const [imageUrl, setImageUrl] = useState([]);
@@ -98,6 +100,7 @@ function Products() {
     setProductName(null);
     setDescription(null);
     setType([]);
+    setLinks(['']);
     setPrice(0);
     setImageUrl([]);
     setImageSrc([]);
@@ -156,6 +159,7 @@ function Products() {
         imageSrc.forEach((image, index) => {
             formData.append(`image`, image);
         });
+        links.forEach((item) => formData.append('links', item));
 
         fetch(`${process.env.REACT_APP_API_URL}/add_product`,{
             method: 'POST',
@@ -253,6 +257,7 @@ function Products() {
     function closeEditModal(){
       setProductName(null);
       setType([]);
+      setLinks(['']);
       setDescription(null);
       setPrice(0);
       setImageUrl([]);
@@ -280,6 +285,7 @@ function Products() {
           formData.append(`image`, image);
       });
 
+      links.forEach((item) => formData.append('links', item));
 
       fetch(`${process.env.REACT_APP_API_URL}/edit_product/${editId}`,{
           method: 'PUT',
@@ -326,6 +332,23 @@ function Products() {
     .catch( err => { console.log(err) })
   },[])
 
+  const addLinksInput = () => {
+    setLinks([...links, '']);
+  };
+
+  const updateLinks = (index, value) => {
+    const newLinks = [...links];
+    newLinks[index] = value;
+    setLinks(newLinks);
+  };
+
+  // Remove a specific chassis number input field
+  const removeLinksInput = (index) => {
+    if (links.length > 1) {
+      const newLinks = links.filter((_, i) => i !== index);
+      setLinks(newLinks);
+    }
+  };
 
   return (
     <>
@@ -477,6 +500,36 @@ function Products() {
         <Label className="mt-2">
           <span>Product Description</span>
           <Textarea rows={3} className="mt-1" type="text" placeholder="Description" onChange={e => setDescription(e.target.value)} required/>
+        </Label>
+
+        <Label className="mt-2">
+          <span>Youtube Links</span>
+          {links.map((link, index) => (
+            <div key={index} className="flex mb-4 items-center">
+              <Input
+                type="text"
+                placeholder={`Enter Link ${index + 1}`}
+                value={link}
+                onChange={(e) => updateLinks(index, e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded-md"
+              />
+              <button
+                type="button"
+                onClick={() => removeLinksInput(index)}
+                className="ml-1 text-red-500 flex items-center justify-center p-1 text-sm"
+                disabled={links.length === 1} // Disable if it's the last input
+              >
+                X
+              </button>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={addLinksInput}
+            className="bg-blue-500 hover:bg-blue-600 text-white p-1 rounded-md mb-4 text-xs"
+          >
+            + Add Link
+          </button>
         </Label>
 
         <Label className="mt-2">
@@ -652,6 +705,38 @@ function Products() {
           <Textarea rows={3} className="mt-1" type="text" placeholder="Description" value={description}  onChange={e => setDescription(e.target.value)} required/>
         </Label>
 
+        
+
+        <Label className="mt-2">
+          <span>Youtube Links</span>
+          {links.map((link, index) => (
+            <div key={index} className="flex mb-4 items-center">
+              <Input
+                type="text"
+                placeholder={`Enter Link ${index + 1}`}
+                value={link}
+                onChange={(e) => updateLinks(index, e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded-md"
+              />
+              <button
+                type="button"
+                onClick={() => removeLinksInput(index)}
+                className="ml-1 text-red-500 flex items-center justify-center p-1 text-sm"
+                disabled={links.length === 1} // Disable if it's the last input
+              >
+                X
+              </button>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={addLinksInput}
+            className="bg-blue-500 hover:bg-blue-600 text-white p-1 rounded-md mb-4 text-xs"
+          >
+            + Add Link
+          </button>
+        </Label>
+
         <Label className="mt-2">
           <span>Price</span>
           <Input className="mt-1" type="number" placeholder="0" value={price} onChange={e => setPrice(e.target.value)} required/>
@@ -687,6 +772,7 @@ function Products() {
               <TableCell>Image</TableCell>
               <TableCell>Name & Category</TableCell>
               <TableCell>Product Description</TableCell>
+              <TableCell>Youtube Links</TableCell>
               <TableCell>Price</TableCell>
               <TableCell className="text-center">In Stock?</TableCell>
               <TableCell>Edit</TableCell>
@@ -717,6 +803,19 @@ function Products() {
                     {/* <span className="text-xs whitespace-pre-wrap">{dt.description}</span> */}
                 </TableCell>
                 <TableCell>
+                  {
+                    dt.links && dt.links.length > 0 && dt.links.map(link => (
+                      <div
+                        className="text-xs text-blue-500 hover:text-blue-400 underline w-40 overflow-hidden whitespace-nowrap text-ellipsis px-2"
+                      >
+                        <a href={link} target="_blank" rel="noopener noreferrer">
+                          {link}
+                        </a>
+                      </div>
+                    )) 
+                  }
+                </TableCell>
+                <TableCell>
                   <span className="text-sm">Ksh. {dt.price.toLocaleString()}</span>
                 </TableCell>
                 <TableCell>
@@ -734,6 +833,7 @@ function Products() {
                       e.preventDefault();
                       setEditId(dt._id);
                       setType(dt.type);
+                      setLinks(dt.links)
                       setProductName(dt.productName);
                       setDescription(dt.description);
                       setPrice(dt.price);
@@ -744,7 +844,7 @@ function Products() {
                       setImageUrl(prevImageUrls => [...prevImageUrls, ...imageUrls]);
                       openEditModal();
                     }} 
-                    className='text-xs p-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white'>
+                    className='text-xs p-2 rounded-lg bg-blue-500 hover:bg-blue-700 text-white'>
                       Edit
                     </button>
                 </TableCell>
