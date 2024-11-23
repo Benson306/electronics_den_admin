@@ -24,6 +24,7 @@ function ManageCategories() {
     const [category, setCategory] = useState(null);
     const [editId, setEditId] = useState(null);
     const [change, setChange] = useState(false);
+    const [subCategories, setSubCategories] = useState(['']);
 
     const { token } = useContext(AuthContext);
 
@@ -67,7 +68,8 @@ function ManageCategories() {
                 'Authorization':`Bearer ${token}`
             },
             body: JSON.stringify({
-                category
+                category,
+                sub_categories: subCategories
             })
         })
         .then(response => {
@@ -115,6 +117,8 @@ function ManageCategories() {
     }
 
     function closeModal() {
+        setCategory(null);
+        setSubCategories(['']);
         setIsModalOpen(false)
     }
 
@@ -125,6 +129,8 @@ function ManageCategories() {
     }
 
     function closeEditModal() {
+        setCategory(null);
+        setSubCategories(['']);
         setEditModalOpen(false)
     }
 
@@ -136,7 +142,8 @@ function ManageCategories() {
                 'Authorization':`Bearer ${token}`
             },
             body: JSON.stringify({
-                category
+                category,
+                sub_categories: subCategories
             })
         })
         .then((res)=>{
@@ -167,6 +174,24 @@ function ManageCategories() {
         }
     })
 
+    const addSubCategoriesInput = () => {
+      setSubCategories([...subCategories, '']);
+    };
+  
+    const updateSubCategories = (index, value) => {
+      const newSubCategories = [...subCategories];
+      newSubCategories[index] = value;
+      setSubCategories(newSubCategories);
+    };
+  
+    // Remove a specific chassis number input field
+    const removeSubCategoriesInput = (index) => {
+      if (subCategories.length > 1) {
+        const newSubCategories = subCategories.filter((_, i) => i !== index);
+        setSubCategories(newSubCategories);
+      }
+    };
+
   return (
     <div>
       <PageTitle>Manage Categories</PageTitle>
@@ -186,7 +211,7 @@ function ManageCategories() {
           <TableHeader>
             <tr>
               <TableCell>Category</TableCell>
-              <TableCell></TableCell>
+              <TableCell>Sub Categories</TableCell>
               <TableCell>Actions</TableCell>
             </tr>
           </TableHeader>
@@ -202,13 +227,23 @@ function ManageCategories() {
                 <TableCell>
                   <span className="text-sm">{dt.category}</span>
                 </TableCell>
-                <TableCell></TableCell>
+                <TableCell>
+                  <div className='flex gap-2'>
+                    {
+                      dt.sub_categories.map(sub => (
+                        <div className='bg-gray-200 px-2 py-1 text-xs rounded-md'>{sub}</div>
+                      ))
+                    }
+                  </div>
+                    
+                </TableCell>
                 <TableCell>
                     <div className='flex gap-4'>
                         <button onClick={e => {
                             e.preventDefault();
                             setEditId(dt._id);
                             setCategory(dt.category);
+                            setSubCategories(dt.sub_categories)
                             openEditModal();
                             //handle(dt._id);
                         }} className='text-xs p-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white'>Edit</button>
@@ -233,6 +268,36 @@ function ManageCategories() {
         <Label>
           <span>Category</span>
           <Input className="mt-1" type="text" placeholder="Category" onChange={e => setCategory(e.target.value)} required/>
+        </Label>
+
+        <Label className="mt-2">
+          <span>Sub Categories</span>
+          {subCategories.map((sub, index) => (
+            <div key={index} className="flex mb-4 items-center">
+              <Input
+                type="text"
+                placeholder={`Enter Sub Category ${index + 1}`}
+                value={sub}
+                onChange={(e) => updateSubCategories(index, e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded-md"
+              />
+              <button
+                type="button"
+                onClick={() => removeSubCategoriesInput(index)}
+                className="ml-1 text-red-500 flex items-center justify-center p-1 text-sm"
+                disabled={subCategories.length === 1} // Disable if it's the last input
+              >
+                X
+              </button>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={addSubCategoriesInput}
+            className="bg-blue-500 hover:bg-blue-600 text-white p-1 rounded-md mb-4 text-xs"
+          >
+            + Add Sub Categories
+          </button>
         </Label>
 
         </ModalBody>
@@ -265,6 +330,36 @@ function ManageCategories() {
         <Label>
           <span>Category</span>
           <Input className="mt-1" type="text" placeholder="category" value={category} onChange={e => setCategory(e.target.value)} required/>
+        </Label>
+
+        <Label className="mt-2">
+          <span>Sub Categories</span>
+          {subCategories.map((sub, index) => (
+            <div key={index} className="flex mb-4 items-center">
+              <Input
+                type="text"
+                placeholder={`Enter Sub Category ${index + 1}`}
+                value={sub}
+                onChange={(e) => updateSubCategories(index, e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded-md"
+              />
+              <button
+                type="button"
+                onClick={() => removeSubCategoriesInput(index)}
+                className="ml-1 text-red-500 flex items-center justify-center p-1 text-sm"
+                disabled={subCategories.length === 1} // Disable if it's the last input
+              >
+                X
+              </button>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={addSubCategoriesInput}
+            className="bg-blue-500 hover:bg-blue-600 text-white p-1 rounded-md mb-4 text-xs"
+          >
+            + Add Sub Categories
+          </button>
         </Label>
 
         </ModalBody>
