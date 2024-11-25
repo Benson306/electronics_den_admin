@@ -68,6 +68,7 @@ function Products() {
   const [price, setPrice] = useState(0);
   const [error, setError] = useState(false);
   const [type, setType] = useState([]);
+  const [subCategory, setSubCategory] = useState([]);
   const [links, setLinks] = useState(['']);
 
   const [imageSrc, setImageSrc] = useState([]);
@@ -100,6 +101,7 @@ function Products() {
     setProductName(null);
     setDescription(null);
     setType([]);
+    setSubCategory([])
     setLinks(['']);
     setPrice(0);
     setImageUrl([]);
@@ -156,6 +158,7 @@ function Products() {
         formData.append('description', description);
 
         type.forEach((item) => formData.append('type', item));
+        subCategory.forEach((item) => formData.append('sub_category', item));
         imageSrc.forEach((image, index) => {
             formData.append(`image`, image);
         });
@@ -257,6 +260,7 @@ function Products() {
     function closeEditModal(){
       setProductName(null);
       setType([]);
+      setSubCategory([]);
       setLinks(['']);
       setDescription(null);
       setPrice(0);
@@ -280,7 +284,7 @@ function Products() {
       formData.append('description', description);
 
       type.forEach((item) => formData.append('type', item));
-
+      subCategory.forEach((item) => formData.append('sub_category', item));
       imageSrc.forEach((image, index) => {
           formData.append(`image`, image);
       });
@@ -349,6 +353,8 @@ function Products() {
       setLinks(newLinks);
     }
   };
+
+  console.log(type)
 
   return (
     <>
@@ -489,6 +495,45 @@ function Products() {
                 <span>{tp}</span>
                 <button 
                   onClick={() => setType((prevType) => prevType.filter(item => item !== tp))}
+                >
+                  X
+                </button>
+              </div>
+            ))}
+          </div>
+        </Label>
+
+        <Label className="mt-4">
+          <span>Sub Category</span>
+          <Select 
+            className="mt-1" 
+            onChange={(e) => {
+              const selectedCategory = e.target.value;
+              setSubCategory((prevType) => 
+                prevType.includes(selectedCategory) ? prevType : [...prevType, selectedCategory]
+              );
+            }}
+          >
+            <option value={null}></option>
+            {
+            
+            type.length > 0 && 
+            categories.filter(item => item.category == type[0])
+            .flatMap((item) => item.sub_categories || [])
+            .map((sub_categ, index) => ( 
+                <option key={index} value={sub_categ}>
+                    {sub_categ}
+                </option>
+            ))
+            }
+          </Select>
+
+          <div className='flex gap-1 my-2'>
+            {subCategory.map((tp, index) => (
+              <div key={index} className='bg-gray-200 flex gap-1 px-2 py-1 text-xs'>
+                <span>{tp}</span>
+                <button 
+                  onClick={() => setSubCategory((prevType) => prevType.filter(item => item !== tp))}
                 >
                   X
                 </button>
@@ -661,6 +706,11 @@ function Products() {
             <option value="hoodie">Hoodie</option>
           </Select>
         </Label> */}
+        
+        <Label className="mt-2">
+          <span>Product Name</span>
+          <Input className="mt-1" type="email" placeholder="Product name" value={productName} onChange={e => setProductName(e.target.value)} required/>
+        </Label>
 
         <Label className="mt-4">
           <span>Category</span>
@@ -695,9 +745,43 @@ function Products() {
           </div>
         </Label>
 
-        <Label className="mt-2">
-          <span>Product Name</span>
-          <Input className="mt-1" type="email" placeholder="Product name" value={productName} onChange={e => setProductName(e.target.value)} required/>
+        <Label className="mt-4">
+          <span>Sub Category</span>
+          <Select 
+            className="mt-1" 
+            onChange={(e) => {
+              const selectedCategory = e.target.value;
+              setSubCategory((prevType) => 
+                prevType.includes(selectedCategory) ? prevType : [...prevType, selectedCategory]
+              );
+            }}
+          >
+            <option value={null}></option>
+            {
+            
+            type.length > 0 && 
+            categories.filter(item => item.category == type[0])
+            .flatMap((item) => item.sub_categories || [])
+            .map((sub_categ, index) => ( 
+                <option key={index} value={sub_categ}>
+                    {sub_categ}
+                </option>
+            ))
+            }
+          </Select>
+
+          <div className='flex gap-1 my-2'>
+            {subCategory.map((tp, index) => (
+              <div key={index} className='bg-gray-200 flex gap-1 px-2 py-1 text-xs'>
+                <span>{tp}</span>
+                <button 
+                  onClick={() => setSubCategory((prevType) => prevType.filter(item => item !== tp))}
+                >
+                  X
+                </button>
+              </div>
+            ))}
+          </div>
         </Label>
 
         <Label className="mt-2">
@@ -797,6 +881,10 @@ function Products() {
                     <span className="text-xs capitalize flex gap-1 my-1">
                       {dt.type.map( tp => <div className='bg-gray-200 px-2 py-1 rounded-lg'>{tp}</div>)}
                     </span>
+                    <span className="text-xs capitalize flex items-center gap-1 my-1">
+                      <span>Sub Category:</span>
+                      {dt.sub_category.map( tp => <div className='bg-gray-100 px-2 py-1 rounded-lg'>{tp}</div>)}
+                    </span>
                 </TableCell>
                 <TableCell>
                   <ReadMoreText description={dt.description} />
@@ -833,6 +921,7 @@ function Products() {
                       e.preventDefault();
                       setEditId(dt._id);
                       setType(dt.type);
+                      setSubCategory(dt.sub_category)
                       setLinks(dt.links)
                       setProductName(dt.productName);
                       setDescription(dt.description);
@@ -861,9 +950,6 @@ function Products() {
         <TableFooter>
         </TableFooter>
       </TableContainer>
-
-
-
     </>
   )
 }
